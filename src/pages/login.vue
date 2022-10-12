@@ -24,11 +24,19 @@
 
       <el-form :model="form" class="w-[250px]">
         <el-form-item>
-          <el-input v-model="form.name" placeholder="请输入用户名" />
+          <el-input v-model="form.name" placeholder="请输入用户名">
+            <template #prefix>
+              <el-icon><User /></el-icon>
+            </template>
+          </el-input>
         </el-form-item>
 
         <el-form-item>
-          <el-input v-model="form.password" placeholder="请输入密码" />
+          <el-input v-model="form.password" placeholder="请输入密码">
+            <template #prefix>
+              <el-icon class="el-input__icon"><Lock /></el-icon>
+            </template>
+          </el-input>
         </el-form-item>
         <el-form-item>
           <el-button
