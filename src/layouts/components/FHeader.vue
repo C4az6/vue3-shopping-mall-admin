@@ -50,13 +50,11 @@
     </div>
   </div>
 
-  <el-drawer
-    v-model="showDrawer"
+  <formDrawer
+    ref="formDrawerRef"
     title="修改密码"
-    direction="rtl"
-    :before-close="handleClose"
-    :close-on-click-modal="false"
-    size="45%"
+    destroyOnClose
+    @submit="onSubmit"
   >
     <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
       <el-form-item label="旧密码" prop="oldpassword">
@@ -72,19 +70,8 @@
         <el-input v-model="form.repassword" type="password" show-password>
         </el-input>
       </el-form-item>
-
-      <el-form-item>
-        <el-button
-          round
-          color="#6366f1"
-          type="primary"
-          @click="onSubmit"
-          :loading="isLoading"
-          >提 交</el-button
-        >
-      </el-form-item>
     </el-form>
-  </el-drawer>
+  </formDrawer>
 </template>
 
 <script setup>
@@ -94,6 +81,7 @@ import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { logout, updatePassword } from "~/api/manager.js";
 import { useFullscreen } from "@vueuse/core";
+import FormDrawer from "~/components/FormDrawer.vue";
 
 const { isFullscreen, toggle } = useFullscreen();
 const router = useRouter();
@@ -115,9 +103,7 @@ const rules = {
 };
 
 const formRef = ref(null);
-
-// 是否显示修改密码
-const showDrawer = ref(false);
+const formDrawerRef = ref(null);
 
 function handleLogout() {
   showModal("是否要退出登录?").then((res) => {
@@ -141,7 +127,7 @@ const hanldeCommand = (key) => {
       handleLogout();
       break;
     case "rePassword":
-      showDrawer.value = true;
+      formDrawerRef.value.open();
       break;
     default:
       break;
@@ -154,17 +140,23 @@ const onSubmit = () => {
     if (!valid) {
       return false;
     }
-    updatePassword(form).then((response) => {
-      console.log("response: ", response);
-      store
-        .dispatch("logout")
-        .then((res) => {
-          router.push("/login");
-        })
-        .catch((err) => {
-          console.log("error: ", err);
-        });
-    });
+    // 开启loading
+    formDrawerRef.value.showLoading();
+    updatePassword(form)
+      .then((response) => {
+        toast("提交密码成功,请重新登录", "success");
+        store
+          .dispatch("logout")
+          .then((res) => {
+            router.push("/login");
+          })
+          .catch((err) => {
+            console.log("error: ", err);
+          });
+      })
+      .finally(() => {
+        formDrawerRef.value.hideLoading();
+      });
   });
 };
 </script>
