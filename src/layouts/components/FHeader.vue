@@ -6,12 +6,29 @@
     </span>
 
     <el-icon class="icon-btn"><fold /></el-icon>
-    <el-icon class="icon-btn"><refresh /></el-icon>
+    <el-tooltip
+      class="box-item"
+      effect="dark"
+      content="刷新"
+      placement="bottom"
+    >
+      <el-icon class="icon-btn" @click="handleRefresh"><refresh /></el-icon>
+    </el-tooltip>
 
     <div class="ml-auto flex items-center">
-      <el-icon class="icon-btn"><full-screen /></el-icon>
+      <el-tooltip
+        class="box-item"
+        effect="dark"
+        :content="isFullscreen ? '退出全屏' : '全屏'"
+        placement="bottom"
+      >
+        <el-icon class="icon-btn" @click="toggle">
+          <full-screen v-if="!isFullscreen" />
+          <aim v-else />
+        </el-icon>
+      </el-tooltip>
       <!-- 下拉菜单组件 -->
-      <el-dropdown class="dropdown">
+      <el-dropdown class="dropdown" @command="hanldeCommand">
         <span class="flex items-center text-light-50">
           <el-avatar
             class="mr-2"
@@ -25,8 +42,8 @@
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>修改密码</el-dropdown-item>
-            <el-dropdown-item>退出登录</el-dropdown-item>
+            <el-dropdown-item command="rePassword">修改密码</el-dropdown-item>
+            <el-dropdown-item command="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -34,7 +51,46 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { showModal, toast } from "~/composables/utils.js";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+import { logout } from "~/api/manager.js";
+import { useFullscreen } from "@vueuse/core";
+
+const { isFullscreen, toggle } = useFullscreen();
+const router = useRouter();
+const store = useStore();
+
+function handleLogout() {
+  showModal("是否要退出登录?").then((res) => {
+    logout().then(() => {
+      store.dispatch("logout");
+      // 跳转登录页面
+      router.push("/login");
+      // 提示退出登录成功
+      toast("退出登录成功", "success");
+    });
+  });
+}
+
+// 监听刷新点击事件
+const handleRefresh = () => location.reload();
+
+// 下拉菜单选择回调
+const hanldeCommand = (key) => {
+  switch (key) {
+    case "logout":
+      handleLogout();
+      break;
+    case "rePassword":
+      console.log("修改密码~");
+      break;
+    default:
+      break;
+  }
+};
+</script>
 
 <style>
 .f-header {
