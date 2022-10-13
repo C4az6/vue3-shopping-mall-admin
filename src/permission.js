@@ -1,12 +1,16 @@
 /* 处理权限验证 */
 import router from '~/router';
 import { getToken } from '~/composables/auth.js'
-import { toast } from '~/composables/utils.js'
+import { toast, showFullLoading, hideFullLoading } from '~/composables/utils.js'
 import store from './store';
 
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
-  console.log("全局前置守卫");
+
+  // 显示loading
+  showFullLoading();
+
+
   const token = getToken();
   // 没有登录强制跳转回登录页
   if (!token && to.path !== '/login') {
@@ -27,4 +31,9 @@ router.beforeEach(async (to, from, next) => {
 
   // 放行
   next();
+})
+
+// 全局后置守卫
+router.afterEach((to, from) => {
+  hideFullLoading()
 })

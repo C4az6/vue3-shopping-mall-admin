@@ -11,6 +11,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './permission.js'
+import "nprogress/nprogress.css"
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
