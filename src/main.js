@@ -10,7 +10,7 @@ import App from './App.vue'
 // 引入router
 import router from './router'
 import store from './store'
-
+import './permission.js'
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
