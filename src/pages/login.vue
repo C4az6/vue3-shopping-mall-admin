@@ -52,12 +52,12 @@
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
-import { login, getManagerInfo } from "~/api/manager.js";
+import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
+// import { login, getManagerInfo } from "~/api/manager.js";
 import { toast } from "~/composables/utils.js";
+import { getToken, setToken, removeToken } from "~/composables/auth.js";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { getToken, setToken, removeToken } from "~/composables/auth.js";
 const router = useRouter();
 const store = useStore();
 
@@ -92,28 +92,37 @@ const onSubmit = () => {
     }
     // 将loading状态设为true
     isLoading.value = true;
-    try {
-      const result = await login(form.username, form.password);
-      console.log("result: ", result.token);
-      // 提示登录成功
-      toast("登录成功");
-      // 存储用户的登录信息
-      setToken(result.token);
-
-      // 获取管理员信息和权限菜单数据
-      getManagerInfo().then((res) => {
-        console.log("response: ", res);
-        // 写入到vuex中
-        store.commit("SET_USERINFO", res);
+    store
+      .dispatch("login", form)
+      .then((res) => {
+        // 跳转到后台首页
+        router.push("/");
+      })
+      .catch((err) => {
+        console.log("error: ", err);
+      })
+      .finally(() => {
+        isLoading.value = false;
       });
-      // 跳转到后台首页
-      router.push("/");
-    } catch (error) {
-    } finally {
-      isLoading.value = false;
-    }
   });
 };
+
+// 监听回车事件
+function onKeyUp(e) {
+  if (e.key === "Enter") {
+    onSubmit();
+  }
+}
+
+onMounted(() => {
+  // 添加键盘监听事件
+  document.addEventListener("keyup", onKeyUp);
+});
+
+onBeforeUnmount(() => {
+  // 移除键盘监听
+  document.removeEventListener("keyup", onKeyUp);
+});
 </script>
 
 <style lang="less" scoped>
