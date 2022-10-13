@@ -1,25 +1,17 @@
 <template>
-  <el-row class="bg-indigo-500 min-h-screen">
-    <el-col :lg="16" :md="12" class="flex items-center justify-center">
+  <el-row class="login-container">
+    <el-col :lg="16" :md="12" class="left">
       <div>
-        <div class="font-bold text-5xl text-light-50 mb-4">欢迎光临</div>
-        <div class="text-gray-200 text-sm">
-          这是我的一个Vue3+vite实战后台管理系统的个人练习项目
-        </div>
+        <div>欢迎光临</div>
+        <div>这是我的一个Vue3+vite实战后台管理系统的个人练习项目</div>
       </div>
     </el-col>
-    <el-col
-      :lg="8"
-      :md="12"
-      class="bg-light-50 flex items-center justify-center flex-col"
-    >
-      <h2 class="font-bold text-3xl text-gray-900">欢迎回来</h2>
-      <div
-        class="flex items-center justify-center my-5 text-gray-300 space-x-2"
-      >
-        <span class="h-[1px] w-16 bg-gray-200"></span>
+    <el-col :lg="8" :md="12" class="right">
+      <h2 class="title">欢迎回来</h2>
+      <div>
+        <span class="line"></span>
         <span>账号密码登录</span>
-        <span class="h-[1px] w-16 bg-gray-200"></span>
+        <span class="line"></span>
       </div>
 
       <el-form :model="form" class="w-[250px]">
@@ -67,8 +59,38 @@ const onSubmit = () => {
 };
 </script>
 
-<style>
+<style lang="less" scoped>
 .el-col-md-12 {
   display: flex;
+}
+
+.login-container {
+  @apply bg-indigo-500 min-h-screen;
+  .left,
+  .right {
+    @apply flex items-center justify-center;
+  }
+  .right {
+    @apply bg-light-50 flex-col;
+    .title {
+      @apply font-bold text-3xl text-gray-900;
+    }
+    > div {
+      @apply flex items-center justify-center my-5 text-gray-300 space-x-2;
+    }
+  }
+
+  .left > div > div {
+    &:first-child {
+      @apply font-bold text-5xl text-light-50 mb-4;
+    }
+    &:nth-child(2) {
+      @apply text-gray-200 text-sm;
+    }
+  }
+}
+
+.right .line {
+  @apply h-1px w-16 bg-gray-200;
 }
 </style>
