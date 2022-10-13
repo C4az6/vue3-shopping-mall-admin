@@ -29,6 +29,10 @@ router.beforeEach(async (to, from, next) => {
     await store.dispatch('getInfo')
   }
 
+  // 设置页面标题
+  console.log("to: ", to);
+  let title = (to.meta.title ? to.meta.title : '') + "-youkewang.top"
+  document.title = title;
   // 放行
   next();
 })
