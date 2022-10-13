@@ -2,29 +2,32 @@
   <div>
     后台首页
 
-    {{ $store.state.user }}
+    {{ $store.state.user.username }}
+
+    <el-button type="primary" @click="handleLogout">退出登录</el-button>
   </div>
 </template>
 
 <script setup>
-import { useCookies } from "@vueuse/integrations/useCookies";
-import { getManagerInfo } from "~/api/manager.js";
-const cookie = useCookies();
-console.log(cookie);
+import { showModal, toast } from "~/composables/utils.js";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+import { logout } from "~/api/manager.js";
 
-// 设置cookie
-function set() {
-  cookie.set("admin-token", "123456");
-}
+const router = useRouter();
 
-// 获取cookie
-function get() {
-  const token = cookie.get("admin-token");
-  console.log("get cookie: ", token);
-}
-
-// 删除cookie
-function removeCookie() {
-  cookie.remove("admin-token");
+const store = useStore();
+function handleLogout() {
+  showModal("是否要退出登录?")
+    .then((res) => {
+      logout();
+    })
+    .finally(() => {
+      store.dispatch("logout");
+      // 跳转登录页面
+      router.push("/login");
+      // 提示退出登录成功
+      toast("退出登录成功", "success");
+    });
 }
 </script>

@@ -13,6 +13,6 @@ export const setToken = (token) => {
 }
 
 // 清除token
-export const removeToken = (token) => {
+export const removeToken = () => {
   return cookie.remove(TOKEN_KEY);
 } 

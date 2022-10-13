@@ -20,6 +20,13 @@ const store = createStore({
   },
   // 异步方法
   actions: {
+    // 用户退出登录
+    logout({ commit }) {
+      // 清除用户token
+      removeToken();
+      // 清空Vuex用户状态数据
+      commit('SET_USERINFO', {});
+    },
     // 用户登录
     login({ commit }, { username, password }) {
       return new Promise((resolve, reject) => {
@@ -41,7 +48,6 @@ const store = createStore({
           resolve(res);
         }).catch(err => reject(err));
       })
-
     }
   }
 })

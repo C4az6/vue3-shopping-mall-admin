@@ -17,3 +17,8 @@ export const login = (username, password) => {
 export const getManagerInfo = () => {
   return axios.post('/admin/getinfo');
 }
+
+// 用户退出登录
+export const logout = () => {
+  return axios.post('/admin/logout');
+}
