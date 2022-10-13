@@ -2,9 +2,7 @@
   <div>
     后台首页
 
-    <el-button @click="set">设置</el-button>
-    <el-button @click="get">读取</el-button>
-    <el-button @click="removeCookie">删除</el-button>
+    {{ $store.state.user }}
   </div>
 </template>
 

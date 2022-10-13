@@ -56,8 +56,10 @@ import { reactive, ref } from "vue";
 import { login, getManagerInfo } from "~/api/manager.js";
 import { toast } from "~/composables/utils.js";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import { getToken, setToken, removeToken } from "~/composables/auth.js";
 const router = useRouter();
+const store = useStore();
 
 const form = reactive({
   username: "",
@@ -101,6 +103,8 @@ const onSubmit = () => {
       // 获取管理员信息和权限菜单数据
       getManagerInfo().then((res) => {
         console.log("response: ", res);
+        // 写入到vuex中
+        store.commit("SET_USERINFO", res);
       });
       // 跳转到后台首页
       router.push("/");

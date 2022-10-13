@@ -26,7 +26,7 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(response => {
   return response.data.data;
 }, error => {
-  toast(error.response.data.msg || '请求失败');
+  toast(error.response.data.msg || '请求失败', 'error');
   return Promise.reject(error.response.data.msg);
 })
 
