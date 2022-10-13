@@ -10,7 +10,7 @@
 
 <script setup>
 import { useCookies } from "@vueuse/integrations/useCookies";
-
+import { getManagerInfo } from "~/api/manager.js";
 const cookie = useCookies();
 console.log(cookie);
 
@@ -21,8 +21,8 @@ function set() {
 
 // 获取cookie
 function get() {
-  const res = cookie.get("admin-token");
-  console.log("get cookie: ", res);
+  const token = cookie.get("admin-token");
+  console.log("get cookie: ", token);
 }
 
 // 删除cookie

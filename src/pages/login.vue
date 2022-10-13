@@ -42,6 +42,7 @@
             type="primary"
             class="w-[250px]"
             @click="onSubmit"
+            :loading="isLoading"
             >登 录</el-button
           >
         </el-form-item>
@@ -52,13 +53,12 @@
 
 <script setup>
 import { reactive, ref } from "vue";
-import { login } from "~/api/manager.js";
+import { login, getManagerInfo } from "~/api/manager.js";
 import { ElNotification } from "element-plus";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const cookie = useCookies();
-console.log("login: ", login);
 
 const form = reactive({
   username: "",
@@ -81,31 +81,19 @@ const rules = {
 // 主要用来在template中定义ref，固定写法
 const formRef = ref(null);
 
+const isLoading = ref(false);
+
 const onSubmit = () => {
   // 监听表单验证结果回调事件,false为不通过,true为通过
   formRef.value.validate(async (valid) => {
-    console.log("valid: ", valid);
     if (!valid) {
       return false;
     }
-    console.log("验证通过!");
-    /* login(form.username, form.password)
-      .then((res) => {
-        console.log("res: ", res.data.data.token);
-        // 提示登录成功
-
-        // 存储用户的登录信息
-      })
-      .catch((err) => {
-        ElNotification({
-          message: err.response.data.msg || "请求失败",
-          type: "error",
-          duration: 2500,
-        });
-      }); */
+    // 将loading状态设为true
+    isLoading.value = true;
     try {
       const result = await login(form.username, form.password);
-      console.log("result: ", result.data.data.token);
+      console.log("result: ", result.token);
       // 提示登录成功
       ElNotification({
         message: "登录成功",
@@ -113,16 +101,17 @@ const onSubmit = () => {
         duration: 2500,
       });
       // 存储用户的登录信息
-      cookie.set("adminToken", result.data.data.token);
+      cookie.set("admin-token", result.token);
 
+      // 获取管理员信息和权限菜单数据
+      getManagerInfo().then((res) => {
+        console.log("response: ", res);
+      });
       // 跳转到后台首页
       router.push("/");
     } catch (error) {
-      ElNotification({
-        message: error.response.data.msg || "请求失败",
-        type: "error",
-        duration: 2500,
-      });
+    } finally {
+      isLoading.value = false;
     }
   });
 };

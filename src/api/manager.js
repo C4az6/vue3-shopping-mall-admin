@@ -12,3 +12,8 @@ import axios from '~/axios';
 export const login = (username, password) => {
   return axios.post('/admin/login', { username, password });
 }
+
+// 获取管理员信息和权限菜单
+export const getManagerInfo = () => {
+  return axios.post('/admin/getinfo');
+}
