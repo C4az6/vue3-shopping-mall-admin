@@ -14,17 +14,22 @@
         <span class="line"></span>
       </div>
 
-      <el-form :model="form" class="w-[250px]">
-        <el-form-item>
-          <el-input v-model="form.name" placeholder="请输入用户名">
+      <el-form ref="formRef" :model="form" class="w-[250px]" :rules="rules">
+        <el-form-item prop="username">
+          <el-input v-model="form.username" placeholder="请输入用户名">
             <template #prefix>
               <el-icon><User /></el-icon>
             </template>
           </el-input>
         </el-form-item>
 
-        <el-form-item>
-          <el-input v-model="form.password" placeholder="请输入密码">
+        <el-form-item prop="password">
+          <el-input
+            v-model="form.password"
+            placeholder="请输入密码"
+            type="password"
+            show-password
+          >
             <template #prefix>
               <el-icon class="el-input__icon"><Lock /></el-icon>
             </template>
@@ -46,16 +51,38 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 
-// do not use same name with ref
 const form = reactive({
   username: "",
   password: "",
 });
 
+const rules = {
+  // 这里面的key值最好和上面的form中的key值是对应的。
+  // 每一条验证规则都是一个对象
+  username: [
+    { required: true, message: "用户名不能为空", trigger: "blur" },
+    { min: 3, max: 5, message: "用户名长度必须是3-5个字符", trigger: "blur" },
+  ],
+  password: [
+    { required: true, message: "密码不能为空", trigger: "blur" },
+    { min: 3, max: 5, message: "密码长度必须是3-5个字符", trigger: "blur" },
+  ],
+};
+
+// 主要用来在template中定义ref，固定写法
+const formRef = ref(null);
+
 const onSubmit = () => {
-  console.log("submit!");
+  // 监听表单验证结果回调事件,false为不通过,true为通过
+  formRef.value.validate((valid) => {
+    console.log("valid: ", valid);
+    if (!valid) {
+      return false;
+    }
+    console.log("验证通过!");
+  });
 };
 </script>
 
