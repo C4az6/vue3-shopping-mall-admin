@@ -54,11 +54,10 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { login, getManagerInfo } from "~/api/manager.js";
-import { ElNotification } from "element-plus";
-import { useCookies } from "@vueuse/integrations/useCookies";
+import { toast } from "~/composables/utils.js";
 import { useRouter } from "vue-router";
+import { getToken, setToken, removeToken } from "~/composables/auth.js";
 const router = useRouter();
-const cookie = useCookies();
 
 const form = reactive({
   username: "",
@@ -95,13 +94,9 @@ const onSubmit = () => {
       const result = await login(form.username, form.password);
       console.log("result: ", result.token);
       // 提示登录成功
-      ElNotification({
-        message: "登录成功",
-        type: "success",
-        duration: 2500,
-      });
+      toast("登录成功");
       // 存储用户的登录信息
-      cookie.set("admin-token", result.token);
+      setToken(result.token);
 
       // 获取管理员信息和权限菜单数据
       getManagerInfo().then((res) => {

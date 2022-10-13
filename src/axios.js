@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { ElNotification } from "element-plus";
-import { useCookies } from "@vueuse/integrations/useCookies";
+import { toast } from "~/composables/utils.js";
+import { getToken, setToken, removeToken } from "~/composables/auth.js";
 
-const cookie = useCookies();
 
 const service = axios.create({
   baseURL: "/api"
@@ -12,7 +11,7 @@ const service = axios.create({
 service.interceptors.request.use(config => {
   // 在发送请求之前做些什么
   // 给headers头自动添加token
-  const token = cookie.get('admin-token');
+  const token = getToken('admin-token');
   // token有值的时候才给header头添加token
   token && (config.headers["token"] = token);
   return config;
@@ -27,11 +26,7 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(response => {
   return response.data.data;
 }, error => {
-  ElNotification({
-    message: error.response.data.msg || '请求失败',
-    type: "error",
-    duration: 2500,
-  });
+  toast(error.response.data.msg || '请求失败');
   return Promise.reject(error.response.data.msg);
 })
 
