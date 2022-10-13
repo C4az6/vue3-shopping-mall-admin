@@ -22,3 +22,8 @@ export const getManagerInfo = () => {
 export const logout = () => {
   return axios.post('/admin/logout');
 }
+
+// 用户修改密码
+export const updatePassword = (data) => {
+  return axios.post('admin/updatepassword', data)
+}

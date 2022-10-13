@@ -49,18 +49,75 @@
       </el-dropdown>
     </div>
   </div>
+
+  <el-drawer
+    v-model="showDrawer"
+    title="修改密码"
+    direction="rtl"
+    :before-close="handleClose"
+    :close-on-click-modal="false"
+    size="45%"
+  >
+    <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+      <el-form-item label="旧密码" prop="oldpassword">
+        <el-input v-model="form.oldpassword"> </el-input>
+      </el-form-item>
+
+      <el-form-item label="密码" prop="password">
+        <el-input v-model="form.password" type="password" show-password>
+        </el-input>
+      </el-form-item>
+
+      <el-form-item label="确认密码" prop="repassword">
+        <el-input v-model="form.repassword" type="password" show-password>
+        </el-input>
+      </el-form-item>
+
+      <el-form-item>
+        <el-button
+          round
+          color="#6366f1"
+          type="primary"
+          @click="onSubmit"
+          :loading="isLoading"
+          >提 交</el-button
+        >
+      </el-form-item>
+    </el-form>
+  </el-drawer>
 </template>
 
 <script setup>
+import { ref, reactive } from "vue";
 import { showModal, toast } from "~/composables/utils.js";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import { logout } from "~/api/manager.js";
+import { logout, updatePassword } from "~/api/manager.js";
 import { useFullscreen } from "@vueuse/core";
 
 const { isFullscreen, toggle } = useFullscreen();
 const router = useRouter();
 const store = useStore();
+
+// 修改密码表单
+const form = reactive({
+  oldpassword: "",
+  password: "",
+  repassword: "",
+});
+
+const rules = {
+  oldpassword: [{ required: true, message: "旧密码不能为空", trigger: "blur" }],
+  password: [{ required: true, message: "密码不能为空", trigger: "blur" }],
+  repassword: [
+    { required: true, message: "确认密码不能为空", trigger: "blur" },
+  ],
+};
+
+const formRef = ref(null);
+
+// 是否显示修改密码
+const showDrawer = ref(false);
 
 function handleLogout() {
   showModal("是否要退出登录?").then((res) => {
@@ -84,11 +141,31 @@ const hanldeCommand = (key) => {
       handleLogout();
       break;
     case "rePassword":
-      console.log("修改密码~");
+      showDrawer.value = true;
       break;
     default:
       break;
   }
+};
+
+const onSubmit = () => {
+  // 监听表单验证结果回调事件,false为不通过,true为通过
+  formRef.value.validate(async (valid) => {
+    if (!valid) {
+      return false;
+    }
+    updatePassword(form).then((response) => {
+      console.log("response: ", response);
+      store
+        .dispatch("logout")
+        .then((res) => {
+          router.push("/login");
+        })
+        .catch((err) => {
+          console.log("error: ", err);
+        });
+    });
+  });
 };
 </script>
 
