@@ -26,7 +26,7 @@ router.beforeEach(async (to, from, next) => {
 
   // 如果用户登录了，自动获取用户信息并且存储到vuex中
   if (token) {
-    await store.dispatch('getInfo')
+    store.dispatch('getInfo')
   }
 
   // 设置页面标题
