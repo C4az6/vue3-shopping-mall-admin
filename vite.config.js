@@ -12,5 +12,15 @@ export default defineConfig({
       "~": path.resolve(__dirname, "src")
     }
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://ceshi13.dishait.cn',
+        changeOrigin: true,
+        // 匹配以^开头的/admin字符串,然后替换
+        rewrite: path => path.replace(/^\/api/, '')
+      }
+    }
+  },
   plugins: [vue(), WindiCSS()]
 })

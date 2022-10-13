@@ -52,6 +52,13 @@
 
 <script setup>
 import { reactive, ref } from "vue";
+import { login } from "~/api/manager.js";
+import { ElNotification } from "element-plus";
+import { useCookies } from "@vueuse/integrations/useCookies";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const cookie = useCookies();
+console.log("login: ", login);
 
 const form = reactive({
   username: "",
@@ -76,12 +83,47 @@ const formRef = ref(null);
 
 const onSubmit = () => {
   // 监听表单验证结果回调事件,false为不通过,true为通过
-  formRef.value.validate((valid) => {
+  formRef.value.validate(async (valid) => {
     console.log("valid: ", valid);
     if (!valid) {
       return false;
     }
     console.log("验证通过!");
+    /* login(form.username, form.password)
+      .then((res) => {
+        console.log("res: ", res.data.data.token);
+        // 提示登录成功
+
+        // 存储用户的登录信息
+      })
+      .catch((err) => {
+        ElNotification({
+          message: err.response.data.msg || "请求失败",
+          type: "error",
+          duration: 2500,
+        });
+      }); */
+    try {
+      const result = await login(form.username, form.password);
+      console.log("result: ", result.data.data.token);
+      // 提示登录成功
+      ElNotification({
+        message: "登录成功",
+        type: "success",
+        duration: 2500,
+      });
+      // 存储用户的登录信息
+      cookie.set("adminToken", result.data.data.token);
+
+      // 跳转到后台首页
+      router.push("/");
+    } catch (error) {
+      ElNotification({
+        message: error.response.data.msg || "请求失败",
+        type: "error",
+        duration: 2500,
+      });
+    }
   });
 };
 </script>
