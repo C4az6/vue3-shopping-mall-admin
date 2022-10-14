@@ -1,10 +1,14 @@
-<script setup></script>
-
 <template>
   <router-view></router-view>
 </template>
 
+<script setup></script>
+
 <style>
+body {
+  @apply bg-gray-100;
+}
+
 .btn {
   @apply bg-purple-500 text-indigo-50 px-4 py-2 rounded-full transition-all duration-500 hover:( bg-purple-900) focus:(ring-8 ring-purple-900);
 }
