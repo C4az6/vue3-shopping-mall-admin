@@ -13,6 +13,7 @@
     "@vueuse/integrations": "^9.3.0",
     "axios": "^1.1.2",
     "element-plus": "^2.2.17",
+    "gsap": "^3.11.3",
     "nprogress": "^0.2.0",
     "universal-cookie": "^4.0.4",
     "vue": "^3.2.37",
