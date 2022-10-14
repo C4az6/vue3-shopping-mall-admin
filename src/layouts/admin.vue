@@ -4,9 +4,9 @@
       <FHeader></FHeader>
     </el-header>
     <el-container>
-      <el-asider>
+      <el-aside>
         <FMenu></FMenu>
-      </el-asider>
+      </el-aside>
       <el-main>
         <FTagList></FTagList>
         <router-view></router-view>
