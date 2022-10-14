@@ -9,7 +9,11 @@
       </el-aside>
       <el-main>
         <FTagList></FTagList>
-        <router-view></router-view>
+        <router-view v-slot="{ Component }">
+          <keep-alive :max="10">
+            <component :is="Component"></component>
+          </keep-alive>
+        </router-view>
       </el-main>
     </el-container>
   </el-container>
