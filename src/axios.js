@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { toast } from "~/composables/utils.js";
 import { getToken, setToken, removeToken } from "~/composables/auth.js";
-import router from './router'
+import { router } from './router'
 
 const service = axios.create({
   baseURL: "/api"

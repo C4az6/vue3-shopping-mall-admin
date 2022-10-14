@@ -8,7 +8,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 // import './style.css'
 import App from './App.vue'
 // 引入router
-import router from './router'
+import { router } from './router'
 import store from './store'
 import './permission.js'
 import "nprogress/nprogress.css"
