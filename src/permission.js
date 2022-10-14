@@ -4,12 +4,12 @@ import { getToken } from '~/composables/auth.js'
 import { toast, showFullLoading, hideFullLoading } from '~/composables/utils.js'
 import store from './store';
 
+let hasGetInfo = false;
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
 
   // 显示loading
   showFullLoading();
-
 
   const token = getToken();
   // 没有登录强制跳转回登录页
@@ -26,8 +26,9 @@ router.beforeEach(async (to, from, next) => {
 
   // 如果用户登录了，自动获取用户信息并且存储到vuex中
   let hasNewRoutes = false;
-  if (token) {
-    const { menus } = await store.dispatch('getInfo')
+  if (token && !hasGetInfo) {
+    const { menus } = await store.dispatch('getInfo');
+    hasGetInfo = true;
     // 动态添加路由
     hasNewRoutes = addRoutes(menus);
   }
