@@ -1,18 +1,18 @@
 <template>
   <div class="f-tag-list" :style="{ left: $store.state.asideWidth }">
     <el-tabs
-      v-model="editableTabsValue"
+      v-model="activeTab"
       type="card"
-      closable
       class="flex-1"
-      @edit="handleTabsEdit"
-      style="min-width: 100px"
+      @tab-change="handleTabChange"
+      @tab-remove="handleTabRemove"
     >
       <el-tab-pane
-        v-for="item in editableTabs"
-        :key="item.name"
+        v-for="item in tabList"
+        :key="item.path"
         :label="item.title"
-        :name="item.name"
+        :name="item.path"
+        :closable="item.path !== '/'"
       >
       </el-tab-pane>
     </el-tabs>
@@ -26,113 +26,101 @@
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>Action 1</el-dropdown-item>
-            <el-dropdown-item>Action 2</el-dropdown-item>
+            <el-dropdown-item>关闭其他</el-dropdown-item>
+            <el-dropdown-item>全部关闭</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
     </span>
   </div>
+
+  <!-- 占位符 -->
+  <div style="height: 44px"></div>
 </template>
 
 <script setup>
 // ====== import ======
 import { ref, reactive, computed } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
 import { useStore } from "vuex";
+import { useCookies } from "@vueuse/integrations/useCookies";
 
 // ====== composition api init ======
 const router = useRouter();
+const route = useRoute();
 const store = useStore();
+const cookie = useCookies();
 
 // ====== state ======
-let tabIndex = 2;
-const editableTabsValue = ref("2");
-const editableTabs = ref([
+// 激活的标签卡
+const activeTab = ref(route.path);
+// 标签卡列表
+const tabList = ref([
   {
-    title: "Tab 1",
-    name: "1",
-    content: "Tab 1 content",
-  },
-  {
-    title: "Tab 2",
-    name: "2",
-    content: "Tab 2 content",
-  },
-  {
-    title: "Tab 1",
-    name: "3",
-    content: "Tab 1 content",
-  },
-  {
-    title: "Tab 2",
-    name: "4",
-    content: "Tab 2 content",
-  },
-  {
-    title: "Tab 1",
-    name: "5",
-    content: "Tab 1 content",
-  },
-  {
-    title: "Tab 2",
-    name: "6",
-    content: "Tab 2 content",
-  },
-  {
-    title: "Tab 1",
-    name: "7",
-    content: "Tab 1 content",
-  },
-  {
-    title: "Tab 2",
-    name: "8",
-    content: "Tab 2 content",
-  },
-  {
-    title: "Tab 2",
-    name: "8",
-    content: "Tab 2 content",
-  },
-  {
-    title: "Tab 2",
-    name: "8",
-    content: "Tab 2 content",
+    title: "后台首页",
+    path: "/",
   },
 ]);
 
 // ====== method ======
-const handleTabsEdit = (targetName, action) => {
-  if (action === "add") {
-    const newTabName = `${++tabIndex}`;
-    editableTabs.value.push({
-      title: "New Tab",
-      name: newTabName,
-      content: "New Tab content",
-    });
-    editableTabsValue.value = newTabName;
-  } else if (action === "remove") {
-    const tabs = editableTabs.value;
-    let activeName = editableTabsValue.value;
-    if (activeName === targetName) {
-      tabs.forEach((tab, index) => {
-        if (tab.name === targetName) {
-          const nextTab = tabs[index + 1] || tabs[index - 1];
-          if (nextTab) {
-            activeName = nextTab.name;
-          }
-        }
-      });
-    }
+// 添加标签导航
+const addTab = (t) => {
+  let noTab = tabList.value.findIndex((e) => e.title === t.title) === -1;
+  if (noTab) {
+    // 没有找到tab标签,可以添加到tablist并且存入cookie
+    tabList.value.push(t);
+  }
+  // 把已有的标签数量存起来方便下次初始化使用
+  cookie.set("tabList", tabList.value);
+};
 
-    editableTabsValue.value = activeName;
-    editableTabs.value = tabs.filter((tab) => tab.name !== targetName);
+// 标签切换事件
+const handleTabChange = (e) => {
+  activeTab.value = e;
+  router.push(e);
+};
+
+// 标签删除事件
+const handleTabRemove = (e) => {
+  let tabs = tabList.value;
+  let a = activeTab.value;
+  if (a === e) {
+    // 关闭当前激活中的标签
+    tabs.forEach((item, index) => {
+      if (item.path === e) {
+        // 关闭当前标签后把当前激活标签换成下一个或上一个标签
+        const nextTab = tabs[index + 1] || tabs[index - 1];
+        if (nextTab) {
+          a = nextTab.path;
+        }
+      }
+    });
+  }
+  activeTab.value = a;
+  // 从标签列表中移出当前关闭标签
+  tabList.value = tabList.value.filter((item) => item.path != e);
+  // 更新cookie
+  cookie.set("tabList", tabList.value);
+};
+
+// 初始化标签导航列表
+const initTabList = () => {
+  let tbs = cookie.get("tabList");
+  if (tbs) {
+    tabList.value = tbs;
   }
 };
+initTabList();
 
 // ====== computed ======
 
 // ====== other ======
+// 监听路由更新
+onBeforeRouteUpdate((to, from) => {
+  console.log("__________onBeforeRouteUpdate");
+  activeTab.value = to.path;
+  addTab({ title: to.meta.title, path: to.path });
+});
 </script>
 
 <style scoped>

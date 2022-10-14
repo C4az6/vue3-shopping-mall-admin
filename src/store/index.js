@@ -63,6 +63,7 @@ const store = createStore({
       return new Promise((resolve, reject) => {
         getManagerInfo().then(res => {
           console.log("userinfo: ", res);
+          res.menus = res.menus.filter(e => e.icon !== '123');
           commit('SET_MENUS', res.menus);
           commit('SET_RULENAMES', res.ruleNames)
           commit('SET_USERINFO', res);

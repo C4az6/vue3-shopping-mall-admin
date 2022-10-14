@@ -15,7 +15,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://ceshi13.dishait.cn',
+        // target: 'http://ceshi13.dishait.cn',
+        target: 'http://shopadmin.dishawang.com/api',
         changeOrigin: true,
         // 匹配以^开头的/admin字符串,然后替换
         rewrite: path => path.replace(/^\/api/, '')
