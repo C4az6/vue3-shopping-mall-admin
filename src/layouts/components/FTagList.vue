@@ -18,7 +18,7 @@
     </el-tabs>
 
     <span class="tag-btn">
-      <el-dropdown>
+      <el-dropdown @command="handleClose">
         <span class="el-dropdown-link">
           <el-icon>
             <arrow-down />
@@ -26,8 +26,8 @@
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>关闭其他</el-dropdown-item>
-            <el-dropdown-item>全部关闭</el-dropdown-item>
+            <el-dropdown-item command="clearOther">关闭其他</el-dropdown-item>
+            <el-dropdown-item command="clearAll">全部关闭</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -111,6 +111,24 @@ const initTabList = () => {
   }
 };
 initTabList();
+
+// 下拉菜单关闭按钮事件
+const handleClose = (e) => {
+  console.log("e: ", e);
+  if (e === "clearAll") {
+    // 切换回首页
+    activeTab.value = "/";
+    // 过滤只剩下首页
+    tabList.value = [{ title: "后台首页", path: "/" }];
+  } else if (e === "clearOther") {
+    console.log("e === activeTab.value: ", e === activeTab.value);
+    // 过滤当前激活标签和首页，其他都关掉
+    tabList.value = tabList.value.filter(
+      (item) => item.path === activeTab.value || item.path === "/"
+    );
+  }
+  cookie.set("tabList", tabList.value);
+};
 
 // ====== computed ======
 
