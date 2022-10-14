@@ -10,7 +10,11 @@ const store = createStore({
       // 用户信息
       user: {},
       // 侧边宽度 250px是展开状态 缩起状态是64px
-      asideWidth: "250px"
+      asideWidth: "250px",
+      // 左侧菜单数据列表
+      menus: [],
+      // 角色权限数组
+      ruleNames: []
     }
   },
   // 同步方法
@@ -22,8 +26,15 @@ const store = createStore({
     // 展开/缩起侧边
     handleAsideWidth(state) {
       state.asideWidth = state.asideWidth === "250px" ? "64px" : "250px";
+    },
+    // 设置菜单数据
+    SET_MENUS(state, menus) {
+      state.menus = menus;
+    },
+    // 设置
+    SET_RULENAMES(state, ruleNames) {
+      state.ruleNames = ruleNames;
     }
-
   },
   // 异步方法
   actions: {
@@ -51,6 +62,9 @@ const store = createStore({
     getInfo({ commit }) {
       return new Promise((resolve, reject) => {
         getManagerInfo().then(res => {
+          console.log("userinfo: ", res);
+          commit('SET_MENUS', res.menus);
+          commit('SET_RULENAMES', res.ruleNames)
           commit('SET_USERINFO', res);
           resolve(res);
         }).catch(err => reject(err));

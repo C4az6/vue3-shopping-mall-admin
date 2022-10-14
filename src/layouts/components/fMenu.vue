@@ -56,40 +56,8 @@ const route = useRoute();
 const store = useStore();
 
 // ====== state ======
-
 // 当前路由路径
 const defaultActive = ref(route.path);
-
-const asideMenus = [
-  {
-    name: "后台面板22",
-    icon: "help",
-    child: [],
-    frontpath: "/login",
-  },
-  {
-    name: "后台面板",
-    icon: "help",
-    child: [
-      {
-        name: "主控板",
-        icon: "home-filled",
-        frontpath: "/",
-      },
-    ],
-  },
-  {
-    name: "商城管理",
-    icon: "shopping-bag",
-    child: [
-      {
-        name: "商品管理",
-        icon: "shopping-cart-full",
-        frontpath: "/goods/list",
-      },
-    ],
-  },
-];
 
 // ====== method ======
 // 监听左侧菜单选择事件
@@ -99,8 +67,10 @@ const handleSelect = (e) => {
 };
 
 // ====== computed ======
+// 折叠/展开状态
 const isCollapse = computed(() => store.state.asideWidth === "64px");
-
+// 菜单数据
+const asideMenus = computed(() => store.state.menus);
 // ====== other ======
 </script>
 
@@ -118,5 +88,10 @@ const isCollapse = computed(() => store.state.asideWidth === "64px");
 .el-menu {
   border: 0;
   height: 100%;
+}
+
+/* 隐藏滚动条 */
+.f-menu::-webkit-scrollbar {
+  width: 0px;
 }
 </style>
