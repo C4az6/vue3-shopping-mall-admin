@@ -35,7 +35,6 @@ router.beforeEach(async (to, from, next) => {
   // 设置页面标题
   let title = (to.meta.title ? to.meta.title : '') + "-youkewang.top"
   document.title = title;
-  console.log("to.fullPath: ", to);
   // 放行
   hasNewRoutes ? next(to.fullPath) : next();
 })

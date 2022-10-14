@@ -69,10 +69,6 @@ export const router = createRouter({
 
 
 // 动态添加路由方法
-/* 
-  实现思路:
-
-*/
 export const addRoutes = (menus) => {
   // 是否由新路由
   let hasNewRoutes = false;
