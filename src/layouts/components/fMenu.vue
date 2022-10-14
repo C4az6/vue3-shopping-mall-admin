@@ -3,7 +3,7 @@
     <el-menu
       unique-opened
       :collapse="isCollapse"
-      default-active="2"
+      :default-active="defaultActive"
       class="border-0"
       @select="handleSelect"
       :collapse-transition="false"
@@ -47,13 +47,19 @@
 <script setup>
 // ====== import & init ======
 
-import { useRouter } from "vue-router";
+import { ref, reactive, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
-import { computed } from "vue";
 
 const router = useRouter();
+const route = useRoute();
 const store = useStore();
+
 // ====== state ======
+
+// 当前路由路径
+const defaultActive = ref(route.path);
+
 const asideMenus = [
   {
     name: "后台面板22",
