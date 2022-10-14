@@ -1,6 +1,13 @@
 <template>
-  <div class="f-menu">
-    <el-menu default-active="2" class="border-0" @select="handleSelect">
+  <div class="f-menu" :style="{ width: $store.state.asideWidth }">
+    <el-menu
+      unique-opened
+      :collapse="isCollapse"
+      default-active="2"
+      class="border-0"
+      @select="handleSelect"
+      :collapse-transition="false"
+    >
       <template v-for="(item, index) in asideMenus" :key="index">
         <el-sub-menu
           v-if="item.child && item.child.length > 0"
@@ -38,10 +45,15 @@
 </template>
 
 <script setup>
+// ====== import & init ======
+
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { computed } from "vue";
 
 const router = useRouter();
-
+const store = useStore();
+// ====== state ======
 const asideMenus = [
   {
     name: "后台面板22",
@@ -73,20 +85,32 @@ const asideMenus = [
   },
 ];
 
+// ====== method ======
 // 监听左侧菜单选择事件
 const handleSelect = (e) => {
   console.log(e);
   router.push(e);
 };
+
+// ====== computed ======
+const isCollapse = computed(() => store.state.asideWidth === "64px");
+
+// ====== other ======
 </script>
 
-<style>
+<style scoped>
 .f-menu {
-  width: 250px;
+  transition: all 0.2s;
   top: 64px;
   bottom: 0;
   left: 0;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   @apply shadow-md fixed bg-light-50;
+}
+
+.el-menu {
+  border: 0;
+  height: 100%;
 }
 </style>

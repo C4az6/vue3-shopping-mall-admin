@@ -8,7 +8,9 @@ const store = createStore({
   state() {
     return {
       // 用户信息
-      user: {}
+      user: {},
+      // 侧边宽度 250px是展开状态 缩起状态是64px
+      asideWidth: "250px"
     }
   },
   // 同步方法
@@ -16,7 +18,12 @@ const store = createStore({
     // 设置用户信息
     SET_USERINFO(state, user) {
       state.user = user;
+    },
+    // 展开/缩起侧边
+    handleAsideWidth(state) {
+      state.asideWidth = state.asideWidth === "250px" ? "64px" : "250px";
     }
+
   },
   // 异步方法
   actions: {

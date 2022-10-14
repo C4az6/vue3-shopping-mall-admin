@@ -5,7 +5,10 @@
       youkewang.top
     </span>
 
-    <el-icon class="icon-btn"><fold /></el-icon>
+    <el-icon class="icon-btn" @click="$store.commit('handleAsideWidth')">
+      <fold v-if="$store.state.asideWidth === '250px'" />
+      <Expand v-else />
+    </el-icon>
     <el-tooltip
       class="box-item"
       effect="dark"
