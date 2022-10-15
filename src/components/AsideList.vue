@@ -2,7 +2,6 @@
   <div class="aside-list" :class="{ 'active': active }">
     <span class="truncate">
       <slot></slot>
-      {{ active }}
     </span>
     <el-button class="ml-auto px-1" text type="primary" size="small" @click="$emit('edit')">
       <el-icon :size="12">
