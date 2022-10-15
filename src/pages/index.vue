@@ -58,6 +58,8 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <IndexNavs></IndexNavs>
   </div>
 </template>
 
@@ -65,6 +67,7 @@
 import { getStatistics1 } from "~/api/index.js";
 import { ref } from "vue";
 import CountTo from "~/components/CountTo.vue";
+import IndexNavs from "~/components/IndexNavs.vue";
 
 const panels = ref([]);
 
