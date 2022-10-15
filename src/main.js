@@ -1,7 +1,8 @@
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
-import 'virtual:windi.css'
 import 'element-plus/dist/index.css'
+// 建议放到后面,否则会被elementPlus的默认样式覆盖
+import 'virtual:windi.css'
 // 注册所有图标
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
