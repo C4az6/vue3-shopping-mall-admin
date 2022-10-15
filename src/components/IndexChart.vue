@@ -53,8 +53,9 @@ const handleChoose = (type) => {
 
 let myChart;
 onMounted(() => {
-  myChart = echarts.init(document.getElementById("chart"));
-  getData();
+  let chartDom = document.getElementById("chart");
+
+  chartDom && (myChart = echarts.init(chartDom)) && getData();
 });
 
 onBeforeUnmount(() => {
