@@ -1,7 +1,9 @@
 <template>
   <div class="f-header flex">
     <span class="logo">
-      <el-icon class="mr-1"><eleme-filled /></el-icon>
+      <el-icon class="mr-1">
+        <eleme-filled />
+      </el-icon>
       youkewang.top
     </span>
 
@@ -9,22 +11,14 @@
       <fold v-if="$store.state.asideWidth === '250px'" />
       <Expand v-else />
     </el-icon>
-    <el-tooltip
-      class="box-item"
-      effect="dark"
-      content="刷新"
-      placement="bottom"
-    >
-      <el-icon class="icon-btn" @click="handleRefresh"><refresh /></el-icon>
+    <el-tooltip class="box-item" effect="dark" content="刷新" placement="bottom">
+      <el-icon class="icon-btn" @click="handleRefresh">
+        <refresh />
+      </el-icon>
     </el-tooltip>
 
     <div class="ml-auto flex items-center">
-      <el-tooltip
-        class="box-item"
-        effect="dark"
-        :content="isFullscreen ? '退出全屏' : '全屏'"
-        placement="bottom"
-      >
+      <el-tooltip class="box-item" effect="dark" :content="isFullscreen ? '退出全屏' : '全屏'" placement="bottom">
         <el-icon class="icon-btn" @click="toggle">
           <full-screen v-if="!isFullscreen" />
           <aim v-else />
@@ -33,11 +27,7 @@
       <!-- 下拉菜单组件 -->
       <el-dropdown class="dropdown" @command="hanldeCommand">
         <span class="flex items-center text-light-50">
-          <el-avatar
-            class="mr-2"
-            :size="25"
-            :src="$store.state.user.avatar"
-          ></el-avatar>
+          <el-avatar class="mr-2" :size="25" :src="$store.state.user.avatar"></el-avatar>
           {{ $store.state.user.username }}
           <el-icon class="el-icon--right">
             <arrow-down />
@@ -53,12 +43,7 @@
     </div>
   </div>
 
-  <formDrawer
-    ref="formDrawerRef"
-    title="修改密码"
-    destroyOnClose
-    @submit="onSubmit"
-  >
+  <formDrawer ref="formDrawerRef" title="修改密码" destroyOnClose @submit="onSubmit">
     <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
       <el-form-item label="旧密码" prop="oldpassword">
         <el-input v-model="form.oldpassword"> </el-input>
@@ -110,6 +95,7 @@ const hanldeCommand = (key) => {
 .f-header {
   @apply flex bg-indigo-700 text-light-50 fixed top-0 right-0 left-0 items-center;
   height: 64px;
+  z-index: 1000;
 }
 
 .logo {

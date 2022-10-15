@@ -7,12 +7,37 @@
       <el-pagination background layout="prev, next" :total="total" :current-page="currentPage" :page-size="limit" @current-change="getData" />
     </div>
   </el-aside>
+
+  <FormDrawer title="新增" ref="formDrawerRef" @submit="handleSubmit">
+    <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false">
+      <el-form-item label="分类名称" prop="name">
+        <el-input v-model.trim="form.name"></el-input>
+      </el-form-item>
+      <el-form-item label="排序">
+        <el-input-number v-model="form.order" :min="0" :max="1000"></el-input-number>
+      </el-form-item>
+    </el-form>
+
+  </FormDrawer>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import AsideList from "./AsideList.vue";
 import { getImageClasList } from "~/api/image_class.js";
+import FormDrawer from '~/components/FormDrawer.vue';
+
+// 表单
+const form = reactive({
+  // 相册名称
+  name: "",
+  // 排序规则
+  order: 50
+})
+
+const rules = {
+  name: [{ required: true, message: "图库分类名称不能为空", trigger: "blur" }]
+}
 
 // 加载动画
 const loading = ref(false);
@@ -23,7 +48,25 @@ const imageList = ref([]);
 // 分页状态
 const currentPage = ref(1);
 const total = ref(0);
-const limit = ref(10);
+const limit = ref(15);
+
+
+const formDrawerRef = ref(null);
+const formRef = ref(null);
+
+const openFormDrawer = () => formDrawerRef.value.open();
+
+const handleSubmit = () => {
+  console.log("提交表单")
+  formRef.value.validate((valid) => {
+    if (!valid) return;
+    console.log('提交成功~');
+  })
+}
+
+defineExpose({
+  openFormDrawer
+})
 
 // 获取数据
 function getData(p = null) {
