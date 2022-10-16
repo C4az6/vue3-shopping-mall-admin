@@ -14,3 +14,8 @@ export const createImageClasList = (data) => {
 export const editImageClasList = (id, data) => {
   return axios.post('admin/image_class/' + id, data);
 }
+
+// 删除图库分类
+export const deleteImageClasList = (id) => {
+  return axios.post(`admin/image_class/${id}/delete`);
+}

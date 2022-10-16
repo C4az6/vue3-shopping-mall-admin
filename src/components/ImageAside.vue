@@ -1,7 +1,7 @@
 <template>
   <el-aside width="220px" class="image-aside" v-loading="loading">
     <div class="top">
-      <AsideList @edit="onEdit(item)" @delete="onDelete(item)" v-for="(item, index) in imageList" :key="index" :active="index === 0">{{ item.name }}</AsideList>
+      <AsideList @edit="onEdit(item)" @delete="onDelete(item.id)" v-for="(item, index) in imageList" :key="index" :active="index === 0">{{ item.name }}</AsideList>
     </div>
     <div class="bottom">
       <el-pagination background layout="prev, next" :total="total" :current-page="currentPage" :page-size="limit" @current-change="getData" />
@@ -23,7 +23,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from "vue";
 import AsideList from "./AsideList.vue";
-import { getImageClasList, createImageClasList, editImageClasList } from "~/api/image_class.js";
+import { getImageClasList, createImageClasList, editImageClasList, deleteImageClasList } from "~/api/image_class.js";
 import FormDrawer from '~/components/FormDrawer.vue';
 import { toast } from '~/composables/utils.js'
 
@@ -95,8 +95,17 @@ const onEdit = (row) => {
   formDrawerRef.value.open();
 }
 // 监听图库分类删除事件
-const onDelete = () => {
-  console.log('delete~');
+const onDelete = (id) => {
+  console.log('delete~', id);
+  loading.value = true;
+  deleteImageClasList(id).then(res => {
+    console.log("response: ", res);
+    toast('删除成功');
+    getData();
+  }).finally(() => {
+    loading.value = false;
+  })
+
 }
 
 defineExpose({
