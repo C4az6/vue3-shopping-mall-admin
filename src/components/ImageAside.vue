@@ -1,14 +1,14 @@
 <template>
   <el-aside width="220px" class="image-aside" v-loading="loading">
     <div class="top">
-      <AsideList v-for="(item, index) in imageList" :key="index" :active="index === 0">{{ item.name }}</AsideList>
+      <AsideList @edit="onEdit(item)" @delete="onDelete(item)" v-for="(item, index) in imageList" :key="index" :active="index === 0">{{ item.name }}</AsideList>
     </div>
     <div class="bottom">
       <el-pagination background layout="prev, next" :total="total" :current-page="currentPage" :page-size="limit" @current-change="getData" />
     </div>
   </el-aside>
 
-  <FormDrawer title="新增" ref="formDrawerRef" @submit="handleSubmit">
+  <FormDrawer :title="drawerTitle" ref="formDrawerRef" @submit="handleSubmit">
     <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false">
       <el-form-item label="分类名称" prop="name">
         <el-input v-model.trim="form.name"></el-input>
@@ -17,14 +17,13 @@
         <el-input-number v-model="form.order" :min="0" :max="1000"></el-input-number>
       </el-form-item>
     </el-form>
-
   </FormDrawer>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import AsideList from "./AsideList.vue";
-import { getImageClasList, createImageClasList } from "~/api/image_class.js";
+import { getImageClasList, createImageClasList, editImageClasList } from "~/api/image_class.js";
 import FormDrawer from '~/components/FormDrawer.vue';
 import { toast } from '~/composables/utils.js'
 
@@ -54,8 +53,18 @@ const limit = ref(15);
 
 const formDrawerRef = ref(null);
 const formRef = ref(null);
+// 被修改的图库分类ID
+const editId = ref(0);
+// 弹窗抽屉动态标题
+const drawerTitle = computed(() => editId.value ? '修改' : '新增');
 
-const openFormDrawer = () => formDrawerRef.value.open();
+// 打开抽屉
+const openFormDrawer = () => {
+  editId.value = 0;
+  form.name = "";
+  form.order = "";
+  formDrawerRef.value.open();
+};
 
 const handleSubmit = () => {
   console.log("提交表单")
@@ -63,16 +72,31 @@ const handleSubmit = () => {
     if (!valid) return;
     formDrawerRef.value.showLoading();
     console.log('提交成功~');
-    createImageClasList(form).then(res => {
+
+    const fun = editId.value ? editImageClasList(editId.value, form) : createImageClasList(form);
+    console.log("fun: ", fun);
+    fun.then(res => {
       console.log("response: ", res);
-      toast('新增成功', 'success');
-      getData(1);
+      toast(drawerTitle.value + '成功')
+      getData(editId.value ? currentPage.value : 1);
       // 关闭抽屉弹框
       formDrawerRef.value.close();
     }).finally(() => {
       formDrawerRef.value.hideLoading();
     })
   })
+}
+
+// 监听图库分类编辑事件
+const onEdit = (row) => {
+  editId.value = row.id;
+  form.name = row.name;
+  form.order = row.order;
+  formDrawerRef.value.open();
+}
+// 监听图库分类删除事件
+const onDelete = () => {
+  console.log('delete~');
 }
 
 defineExpose({

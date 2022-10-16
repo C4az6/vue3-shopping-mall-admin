@@ -30,7 +30,7 @@ service.interceptors.response.use(response => {
     removeToken();
     router.push('/logout');
   } else {
-    toast(error.response.data.msg || '请求失败', 'error');
+    toast(error.response.data.msg || '请求失败', 'error', true);
   }
   return Promise.reject(error.response.data.msg);
 })
