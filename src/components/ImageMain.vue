@@ -4,11 +4,15 @@
       <el-row :gutter="10">
         <el-col :span="6" :offset="0" v-for="(item, index) in imageList" :key="index">
           <el-card shadow="hover" class="relative mb-3" :body-style="{'padding': 0}">
-            <el-image :src="item.url" fit="cover" :lazy="true" class=" w-full h-[150px]"></el-image>
+            <el-image :src="item.url" fit="cover" :lazy="true" class=" w-full h-[150px]" :preview-src-list="[item.url]" :initial-index="0"></el-image>
             <div class="image-title">{{item.name}}</div>
             <div class="flex items-center justify-center p-2">
-              <el-button type="primary" size="small" text>重命名</el-button>
-              <el-button type="primary" size="small" text>删除</el-button>
+              <el-button type="primary" size="small" text @click="handleRename(item)">重命名</el-button>
+              <el-popconfirm width="200" title="是否要删除该图片?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(item.id)">
+                <template #reference>
+                  <el-button type="primary" size="small" text>删除</el-button>
+                </template>
+              </el-popconfirm>
             </div>
           </el-card>
 
@@ -23,8 +27,9 @@
 </template>
 
 <script setup>
-import { getImageList } from '~/api/image.js';
+import { getImageList, renameImage, deleteImage } from '~/api/image.js';
 import { ref, reactive, onMounted, computed } from 'vue';
+import { showPrompt, toast } from '~/composables/utils.js';
 
 const total = ref(0);
 const limit = ref(10);
@@ -32,6 +37,31 @@ const currentPage = ref(1);
 const imageList = ref([]);
 const loading = ref(false);
 const imageClassId = ref(0);
+
+// 删除图片
+const handleDelete = (id) => {
+  loading.value = true;
+  deleteImage([id]).then(res => {
+    toast("删除成功");
+    getData();
+  }).finally(() => {
+    loading.value = false;
+  })
+}
+
+// 图片重命名事件
+const handleRename = (item) => {
+  console.log("item: ", item);
+  showPrompt('重命名', item.name).then(({ value }) => {
+    loading.value = true;
+    renameImage(item.id, value).then(res => {
+      toast('修改成功!');
+      getData();
+    }).finally(() => {
+      loading.value = false;
+    })
+  })
+}
 
 // 获取数据
 function getData(p = null) {

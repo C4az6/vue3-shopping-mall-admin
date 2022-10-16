@@ -29,3 +29,14 @@ export const hideFullLoading = () => {
   // 隐藏进度条
   nprogress.done();
 }
+
+
+// 弹出输入框
+export const showPrompt = (tip, value = "") => {
+  return ElMessageBox.prompt(tip, {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    inputValue: value
+  })
+
+}
