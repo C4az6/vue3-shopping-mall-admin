@@ -24,12 +24,19 @@
       <el-pagination background layout="prev,pager, next" :total="total" :current-page="currentPage" :page-size="limit" @current-change="getData" />
     </div>
   </el-main>
+
+  <el-drawer title="上传图片" v-model="drawer">
+    <UploadFile :data="{image_class_id: imageClassId}" @success="handleUploadSuccess"></UploadFile>
+  </el-drawer>
+
 </template>
 
 <script setup>
 import { getImageList, renameImage, deleteImage } from '~/api/image.js';
 import { ref, reactive, onMounted, computed } from 'vue';
 import { showPrompt, toast } from '~/composables/utils.js';
+import UploadFile from '~/components/UploadFile.vue';
+
 
 const total = ref(0);
 const limit = ref(10);
@@ -37,6 +44,14 @@ const currentPage = ref(1);
 const imageList = ref([]);
 const loading = ref(false);
 const imageClassId = ref(0);
+// 上传图片抽屉显示
+const drawer = ref(false);
+
+// 打开上传图片抽屉弹窗
+const openUploadFile = () => drawer.value = true
+
+// 监听图片上传成功
+const handleUploadSuccess = (data) => getData();
 
 // 删除图片
 const handleDelete = (id) => {
@@ -82,13 +97,14 @@ function getData(p = null) {
 
 // 根据分类ID重新加载图片列表
 const loadData = id => {
-  console.log("id: ", typeof id);
+  console.log("当前分类id: ", id);
   currentPage.value = 1;
   imageClassId.value = id;
   getData();
 }
 defineExpose({
-  loadData
+  loadData,
+  openUploadFile
 });
 </script>
 

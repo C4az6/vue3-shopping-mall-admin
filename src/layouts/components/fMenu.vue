@@ -1,18 +1,8 @@
 <template>
   <div class="f-menu" :style="{ width: $store.state.asideWidth }">
-    <el-menu
-      unique-opened
-      :collapse="isCollapse"
-      :default-active="defaultActive"
-      class="border-0"
-      @select="handleSelect"
-      :collapse-transition="false"
-    >
+    <el-menu unique-opened :collapse="isCollapse" :default-active="defaultActive" class="border-0" @select="handleSelect" :collapse-transition="false">
       <template v-for="(item, index) in asideMenus" :key="index">
-        <el-sub-menu
-          v-if="item.child && item.child.length > 0"
-          :index="item.name"
-        >
+        <el-sub-menu v-if="item.child && item.child.length > 0" :index="item.name">
           <template #title>
             <el-icon>
               <!-- 动态组件,生成动态图标 -->
@@ -20,11 +10,7 @@
             </el-icon>
             <span>{{ item.name }}</span>
           </template>
-          <el-menu-item
-            v-for="(item2, index2) in item.child"
-            :key="index2"
-            :index="item2.frontpath"
-          >
+          <el-menu-item v-for="(item2, index2) in item.child" :key="index2" :index="item2.frontpath">
             <el-icon>
               <!-- 动态组件,生成动态图标 -->
               <component :is="item2.icon"></component>

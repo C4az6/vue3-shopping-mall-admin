@@ -2,6 +2,7 @@
   <el-container class="bg-white rounded" :style="{ height: h + 'px' }">
     <el-header class="image-header">
       <el-button type="primary" size="small" @click="handleOpenCreate">新增图片分类</el-button>
+      <el-button type="warning" size="small" @click="handleOpenUpload">上传图片</el-button>
 
     </el-header>
     <el-container>
@@ -34,6 +35,8 @@ const handleImageClassIdChange = id => {
   console.log("image class id change: ", id);
   imageMainRef.value.loadData(id);
 }
+
+const handleOpenUpload = () => imageMainRef.value.openUploadFile();
 
 </script>
 
