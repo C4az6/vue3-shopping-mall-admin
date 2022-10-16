@@ -24,8 +24,9 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import AsideList from "./AsideList.vue";
-import { getImageClasList } from "~/api/image_class.js";
+import { getImageClasList, createImageClasList } from "~/api/image_class.js";
 import FormDrawer from '~/components/FormDrawer.vue';
+import { toast } from '~/composables/utils.js'
 
 // 表单
 const form = reactive({
@@ -60,7 +61,17 @@ const handleSubmit = () => {
   console.log("提交表单")
   formRef.value.validate((valid) => {
     if (!valid) return;
+    formDrawerRef.value.showLoading();
     console.log('提交成功~');
+    createImageClasList(form).then(res => {
+      console.log("response: ", res);
+      toast('新增成功', 'success');
+      getData(1);
+      // 关闭抽屉弹框
+      formDrawerRef.value.close();
+    }).finally(() => {
+      formDrawerRef.value.hideLoading();
+    })
   })
 }
 
