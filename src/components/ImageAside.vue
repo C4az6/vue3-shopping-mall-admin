@@ -1,7 +1,7 @@
 <template>
   <el-aside width="220px" class="image-aside" v-loading="loading">
     <div class="top">
-      <AsideList @edit="onEdit(item)" @delete="onDelete(item.id)" v-for="(item, index) in imageList" :key="index" :active="index === 0">{{ item.name }}</AsideList>
+      <AsideList @click="handleChangeActiveId(item.id)" @edit="onEdit(item)" @delete="onDelete(item.id)" v-for="(item, index) in imageList" :key="index" :active="activeId === item.id">{{ item.name }}</AsideList>
     </div>
     <div class="bottom">
       <el-pagination background layout="prev, next" :total="total" :current-page="currentPage" :page-size="limit" @current-change="getData" />
@@ -26,6 +26,9 @@ import AsideList from "./AsideList.vue";
 import { getImageClasList, createImageClasList, editImageClasList, deleteImageClasList } from "~/api/image_class.js";
 import FormDrawer from '~/components/FormDrawer.vue';
 import { toast } from '~/composables/utils.js'
+
+// 选中图库分类ID
+const activeId = ref(0);
 
 // 表单
 const form = reactive({
@@ -55,8 +58,17 @@ const formDrawerRef = ref(null);
 const formRef = ref(null);
 // 被修改的图库分类ID
 const editId = ref(0);
+
+const emit = defineEmits(["change"]);
+
 // 弹窗抽屉动态标题
 const drawerTitle = computed(() => editId.value ? '修改' : '新增');
+
+// 切换分类
+const handleChangeActiveId = id => {
+  activeId.value = id;
+  emit("change", id);
+}
 
 // 打开抽屉
 const openFormDrawer = () => {
@@ -108,13 +120,10 @@ const onDelete = (id) => {
 
 }
 
-defineExpose({
-  openFormDrawer
-})
+
 
 // 获取数据
 function getData(p = null) {
-  console.log(p)
   if (typeof p === 'number') {
     currentPage.value = p;
   }
@@ -124,11 +133,19 @@ function getData(p = null) {
       console.log("res: ", res);
       imageList.value = res.list;
       total.value = res.totalCount;
+      let item = imageList.value[0];
+      if (item) {
+        handleChangeActiveId(item.id);
+      }
     })
     .finally(() => {
       loading.value = false;
     });
 }
+
+defineExpose({
+  openFormDrawer
+})
 
 onMounted(() => {
   getData();

@@ -5,8 +5,8 @@
 
     </el-header>
     <el-container>
-      <ImageAside ref="imageAsideRef"></ImageAside>
-      <ImageMain></ImageMain>
+      <ImageAside ref="imageAsideRef" @change="handleImageClassIdChange"></ImageAside>
+      <ImageMain ref="imageMainRef"></ImageMain>
     </el-container>
   </el-container>
 </template>
@@ -17,6 +17,7 @@ import ImageAside from "~/components/ImageAside.vue";
 import ImageMain from "~/components/ImageMain.vue";
 
 const imageAsideRef = ref(null);
+const imageMainRef = ref(null)
 
 // 让高度撑满页面
 const windowHeight = window.innerHeight || document.body.clientHeight;
@@ -26,6 +27,12 @@ const h = windowHeight - 64 - 44 - 40;
 const handleOpenCreate = () => {
   // 打开新增图片分类的抽屉组件
   imageAsideRef.value.openFormDrawer();
+}
+
+// 监听图库分类ID变化
+const handleImageClassIdChange = id => {
+  console.log("image class id change: ", id);
+  imageMainRef.value.loadData(id);
 }
 
 </script>
