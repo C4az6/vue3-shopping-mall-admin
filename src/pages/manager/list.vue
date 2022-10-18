@@ -1,0 +1,106 @@
+<template>
+  <el-card shadow="never" :body-style="{ padding: '20px' }">
+    <div class="flex items-center justify-between">
+      <el-button type="primary" size="small" @click="create">新增</el-button>
+      <el-tooltip class="box-item" effect="dark" content="刷新数据" placement="top">
+        <el-icon @click="getData" class="cursor-pointer">
+          <Refresh />
+        </el-icon>
+      </el-tooltip>
+    </div>
+
+    <div class="mt-4">
+      <el-table :data="dataList" stripe style="width: 100%" v-loading="loading">
+        <el-table-column prop="title" label="管理员">
+          <template #default="{row}">
+            <div class="flex items-center">
+              <el-avatar :size="40" :src="row.avatar" @error="errorHandler">
+                <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png" />
+              </el-avatar>
+              <div class="ml-4">
+                <h6>{{row.username}}</h6>
+                <small>ID: {{row.id}}</small>
+              </div>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="create_time" label="所属管理员" align="center">
+          <template #default="{row}">
+            {{row.role?.name ?? "-"}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="create_time" label="状态" align="center">
+          <template #default="{row}">
+            <div>
+              <el-switch :modelValue="row.status" :active-value="1" :inactive-value="0"></el-switch>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="address" label="操作" width="200">
+          <template #default="scope">
+            <el-button type="primary" @click="handleEdit(scope.row)" text size="small">修改</el-button>
+
+            <el-popconfirm width="200" title="是否要删除该管理员?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(scope)">
+              <template #reference>
+                <el-button type="primary" text size="small">删除</el-button>
+              </template>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+
+    <div class="mt-4 flex items-center justify-center">
+      <el-pagination background layout="prev, pager, next" :current-page="currentPage" :page-size="limit" :total="totalCount" @current-change="getData" />
+    </div>
+  </el-card>
+</template>
+
+<script setup>
+import { ref, reactive, computed, onMounted } from 'vue';
+import { getManagerList } from '~/api/manager.js';
+import { toast } from '~/composables/utils.js'
+const loading = ref(false);
+const dataList = ref([]);
+const form = reactive({
+
+});
+const currentPage = ref(1);
+const totalCount = ref(0);
+const limit = ref(10);
+
+const errorHandler = () => true
+
+function handleEdit() {
+
+}
+
+function handleDelete() {
+
+}
+
+function create() {
+  console.log('创建')
+}
+
+function getData(p = null) {
+  console.log(666);
+  if (typeof p == 'number') {
+    currentPage.value = p;
+  }
+  loading.value = true;
+  getManagerList(currentPage.value).then(res => {
+    console.log("response: ", res);
+    dataList.value = res.list;
+    totalCount.value = res.totalCount;
+  }).finally(() => {
+    loading.value = false;
+  });
+}
+
+onMounted(() => getData());
+
+</script>
+
+<style lang="less" scoped>
+</style>

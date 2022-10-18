@@ -27,3 +27,9 @@ export const logout = () => {
 export const updatePassword = (data) => {
   return axios.post('admin/updatepassword', data)
 }
+
+// 管理员列表
+export const getManagerList = (page, limit = 10, name) => {
+  // return axios.get(`admin/manager/${page}?limit=${limit}&keyword=${name}`)
+  return axios.get(`admin/manager/${page}?limit=${limit}`);
+}

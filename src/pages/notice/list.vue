@@ -4,7 +4,7 @@
       <div class="flex items-center justify-between">
         <el-button type="primary" size="small" @click="create">新增</el-button>
         <el-tooltip class="box-item" effect="dark" content="刷新数据" placement="top">
-          <el-icon class="cursor-pointer">
+          <el-icon @click="getData" class="cursor-pointer">
             <Refresh />
           </el-icon>
         </el-tooltip>
@@ -18,7 +18,7 @@
             <template #default="scope">
               <el-button type="primary" @click="handleEdit(scope.row)" text size="small">修改</el-button>
 
-              <el-popconfirm width="200" title="是否要删除该图片?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(scope)">
+              <el-popconfirm width="200" title="是否要删除该公告?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(scope)">
                 <template #reference>
                   <el-button type="primary" text size="small">删除</el-button>
                 </template>
