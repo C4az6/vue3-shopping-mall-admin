@@ -63,7 +63,10 @@ const totalCount = ref(0);
 const currentPage = ref(1);
 const limit = ref(10);
 const formDrawerRef = ref(null);
-const form = reactive({});
+const form = reactive({
+  title: "",
+  content: ""
+});
 const formRef = ref(null);
 
 const rules = {
@@ -77,33 +80,25 @@ const rules = {
 
 // 新增提交
 const handleSubmit = () => {
-  console.log("form: ", form);
   // 表单验证
   formRef.value.validate(valid => {
     console.log(valid);
     if (!valid) return;
     formDrawerRef.value.showLoading();
     createNotice(form).then(res => {
-      console.log("add notice response: ", res);
-      toast('新增公告成功~');
+      toast('新增成功');
       formDrawerRef.value.close();
-      getData();
+      getData(1);
     }).finally(() => {
       formDrawerRef.value.hideLoading();
     })
   })
 }
 
-const resetForm = () => {
-  /* form.title = "";
-  form.content = ""; */
-}
 
 // 新增公告
 const create = () => {
-  resetForm();
   formDrawerRef.value.open()
-  // formDrawerRef.value.clearValidate();
 };
 
 // 删除公告
