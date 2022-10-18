@@ -18,33 +18,24 @@
         <el-form-item prop="username">
           <el-input v-model="form.username" placeholder="请输入用户名">
             <template #prefix>
-              <el-icon><User /></el-icon>
+              <el-icon>
+                <User />
+              </el-icon>
             </template>
           </el-input>
         </el-form-item>
 
         <el-form-item prop="password">
-          <el-input
-            v-model="form.password"
-            placeholder="请输入密码"
-            type="password"
-            show-password
-          >
+          <el-input v-model="form.password" placeholder="请输入密码" type="password" show-password>
             <template #prefix>
-              <el-icon class="el-input__icon"><Lock /></el-icon>
+              <el-icon class="el-input__icon">
+                <Lock />
+              </el-icon>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button
-            round
-            color="#6366f1"
-            type="primary"
-            class="w-[250px]"
-            @click="onSubmit"
-            :loading="isLoading"
-            >登 录</el-button
-          >
+          <el-button round color="#6366f1" type="primary" class="w-[250px]" @click="onSubmit" :loading="isLoading">登 录</el-button>
         </el-form-item>
       </el-form>
     </el-col>
