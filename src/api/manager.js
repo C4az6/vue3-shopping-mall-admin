@@ -49,3 +49,18 @@ export const getManagerList = (page, query = {}) => {
 export const updateManagerStatus = (id, status) => {
   return axios.post(`admin/manager/${id}/update_status`, { status })
 }
+
+// 新增管理员
+export const createManager = (data) => {
+  return axios.post('admin/manager', data);
+}
+
+// 修改管理员
+export const updateManager = (id, data) => {
+  return axios.post(`admin/manager/${id}`, data)
+}
+
+// 删除管理员
+export const deleteManager = id => {
+  return axios.post(`admin/manager/${id}/delete`);
+}

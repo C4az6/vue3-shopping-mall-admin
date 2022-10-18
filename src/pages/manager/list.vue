@@ -75,20 +75,88 @@
       <el-pagination background layout="prev, pager, next" :current-page="currentPage" :page-size="limit" :total="totalCount" @current-change="getData" />
     </div>
   </el-card>
+
+  <FormDrawer ref="formDrawerRef" :title="drawerTitle" @submit="handleSubmit">
+    <el-form :model="form" ref="formRef" :rules="rules" label-width="80px">
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="form.username"></el-input>
+      </el-form-item>
+
+      <el-form-item label="密码" prop="password">
+        <el-input v-model="form.password"></el-input>
+      </el-form-item>
+
+      <el-form-item label="头像">
+        <el-input v-model="form.avatar"></el-input>
+      </el-form-item>
+
+      <el-form-item label="所属管理员" prop="role_id">
+        <el-select v-model="form.role_id" placeholder="请选择所属管理员">
+          <el-option v-for="(item, index) in roles" :key="index" :label="item.name" :value="item.id" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="状态">
+        <el-switch v-model="form.status" :active-value="1" :inactive-value="0">
+        </el-switch>
+      </el-form-item>
+    </el-form>
+
+  </FormDrawer>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
-import { getManagerList, updateManagerStatus } from '~/api/manager.js';
-import { toast } from '~/composables/utils.js'
+import { getManagerList, updateManagerStatus, createManager, updateManager, deleteManager } from '~/api/manager.js';
+import { toast } from '~/composables/utils.js';
+import FormDrawer from '~/components/FormDrawer.vue'
+
 const loading = ref(false);
 const dataList = ref([]);
+const roles = ref([]);
 const searchForm = reactive({
   keyword: ""
 });
 const currentPage = ref(1);
 const totalCount = ref(0);
 const limit = ref(10);
+const formDrawerRef = ref(null);
+const formRef = ref(null);
+const form = reactive({
+  username: "",
+  password: "",
+  role_id: null,
+  status: 1,
+  avatar: ""
+})
+const editId = ref(0);
+const rules = {
+  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  password: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
+  role_id: [{
+    required: true,
+    message: '请选择管理员所属角色',
+    trigger: 'change',
+  }],
+  status: [],
+  avatar: []
+}
+
+const drawerTitle = computed(() => editId.value ? '修改管理员' : '新增管理员')
+
+function handleSubmit() {
+  formRef.value.validate(valid => {
+    if (!valid) return;
+    console.log('验证通过');
+    formDrawerRef.value.showLoading();
+    let promise = editId.value ? updateManager(editId.value, form) : createManager(form);
+    promise.then(res => {
+      toast(drawerTitle.value + '成功');
+      formDrawerRef.value.close();
+      getData();
+    }).finally(() => formDrawerRef.value.hideLoading());
+  })
+}
 
 function statusChange(status, row) {
   row.statusLoading = true;
@@ -107,16 +175,43 @@ function resetSearchForm() {
 
 const errorHandler = () => true
 
-function handleEdit() {
-
+function handleEdit(row) {
+  editId.value = row.id;
+  resetForm(row);
+  formDrawerRef.value.open();
 }
 
-function handleDelete() {
+function handleDelete({ row }) {
+  loading.value = true;
+  deleteManager(row.id).then(res => {
+    toast('删除成功');
+    getData();
+  }).finally(() => loading.value = false)
+}
 
+function resetForm(row = false) {
+  console.log("row: ", row);
+  if (formRef.value) formRef.value.clearValidate();
+  if (row) {
+    // 编辑管理员的情况
+    for (const key in form) {
+      form[key] = row[key];
+      console.log("key");
+    }
+  }
+  console.log("form: ", form);
 }
 
 function create() {
-  console.log('创建')
+  editId.value = 0;
+  resetForm({
+    username: "",
+    password: "",
+    role_id: null,
+    status: 1,
+    avatar: ""
+  })
+  formDrawerRef.value.open();
 }
 
 function getData(p = null) {
@@ -130,6 +225,7 @@ function getData(p = null) {
       return item;
     })
     totalCount.value = res.totalCount;
+    roles.value = res.roles;
   }).finally(() => {
     loading.value = false;
   });
