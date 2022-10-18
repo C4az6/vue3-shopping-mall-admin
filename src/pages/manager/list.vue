@@ -50,19 +50,22 @@
         <el-table-column prop="create_time" label="状态" align="center">
           <template #default="{row}">
             <div>
-              <el-switch :modelValue="row.status" :active-value="1" :inactive-value="0"></el-switch>
+              <el-switch :loading="row.statusLoading" style="--el-switch-on-color: #4338ca;" :modelValue="row.status" :active-value="1" :inactive-value="0" :disabled="row.super == 1" @change="statusChange($event,row)"></el-switch>
             </div>
           </template>
         </el-table-column>
         <el-table-column align="center" prop="address" label="操作" width="200">
           <template #default="scope">
-            <el-button type="primary" @click="handleEdit(scope.row)" text size="small">修改</el-button>
+            <small class="text-sm text-gray-500" v-if="scope.row.super == 1">暂无操作</small>
+            <div v-else>
+              <el-button type="primary" @click="handleEdit(scope.row)" text size="small">修改</el-button>
 
-            <el-popconfirm width="200" title="是否要删除该管理员?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(scope)">
-              <template #reference>
-                <el-button type="primary" text size="small">删除</el-button>
-              </template>
-            </el-popconfirm>
+              <el-popconfirm width="200" title="是否要删除该管理员?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(scope)">
+                <template #reference>
+                  <el-button type="primary" text size="small">删除</el-button>
+                </template>
+              </el-popconfirm>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -76,7 +79,7 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
-import { getManagerList } from '~/api/manager.js';
+import { getManagerList, updateManagerStatus } from '~/api/manager.js';
 import { toast } from '~/composables/utils.js'
 const loading = ref(false);
 const dataList = ref([]);
@@ -86,6 +89,16 @@ const searchForm = reactive({
 const currentPage = ref(1);
 const totalCount = ref(0);
 const limit = ref(10);
+
+function statusChange(status, row) {
+  row.statusLoading = true;
+  updateManagerStatus(row.id, status).then(res => {
+    toast('修改状态成功');
+    row.status = status;
+  }).finally(() => {
+    row.statusLoading = false;
+  })
+}
 
 function resetSearchForm() {
   searchForm.keyword = "";
@@ -112,8 +125,10 @@ function getData(p = null) {
   }
   loading.value = true;
   getManagerList(currentPage.value, searchForm).then(res => {
-    console.log("response: ", res);
-    dataList.value = res.list;
+    dataList.value = res.list.map(item => {
+      item.statusLoading = false;
+      return item;
+    })
     totalCount.value = res.totalCount;
   }).finally(() => {
     loading.value = false;
