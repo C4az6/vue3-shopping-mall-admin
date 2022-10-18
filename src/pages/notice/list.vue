@@ -16,7 +16,7 @@
           <el-table-column prop="create_time" label="发布时间" />
           <el-table-column align="center" prop="address" label="操作" width="200">
             <template #default="scope">
-              <el-button type="primary" text size="small">修改</el-button>
+              <el-button type="primary" @click="handleEdit(scope.row)" text size="small">修改</el-button>
 
               <el-popconfirm width="200" title="是否要删除该图片?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(scope)">
                 <template #reference>
@@ -33,8 +33,8 @@
       </div>
     </el-card>
 
-    <FormDrawer ref="formDrawerRef" title="新增公告" @submit="handleSubmit">
-      <el-form ref="formRef" :model.="form" :rules="rules">
+    <FormDrawer ref="formDrawerRef" :title="drawerTitle" @submit="handleSubmit">
+      <el-form ref="formRef" :model="form" :rules="rules">
         <el-form-item prop="title" label="公告标题">
           <el-input v-model.trim="form.title" placeholder="请输入公告标题">
           </el-input>
@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { getNoticeList, createNotice, editNotice, removeNotice } from '~/api/notice.js';
 import FormDrawer from '~/components/FormDrawer.vue'
 import { toast } from '~/composables/utils.js'
@@ -63,11 +63,15 @@ const totalCount = ref(0);
 const currentPage = ref(1);
 const limit = ref(10);
 const formDrawerRef = ref(null);
+// 抽屉组件的标题
+const drawerTitle = computed(() => editId.value ? '修改' : '新增');
 const form = reactive({
   title: "",
   content: ""
 });
 const formRef = ref(null);
+// 通过这个编辑ID状态来判断当前是新增还是编辑公告
+const editId = ref(0);
 
 const rules = {
   title: [
@@ -78,6 +82,25 @@ const rules = {
   ],
 };
 
+// 重置表单数据
+function resetForm(row = false) {
+  console.log(!!formRef.value)
+  // 清空表单验证
+  if (formRef.value) formRef.value.clearValidate();
+  if (row) {
+    for (const key in form) {
+      form[key] = row[key];
+    }
+  }
+}
+
+// 编辑公告
+const handleEdit = (row) => {
+  editId.value = row.id;
+  resetForm(row);
+  formDrawerRef.value.open();
+}
+
 // 新增提交
 const handleSubmit = () => {
   // 表单验证
@@ -85,10 +108,11 @@ const handleSubmit = () => {
     console.log(valid);
     if (!valid) return;
     formDrawerRef.value.showLoading();
-    createNotice(form).then(res => {
-      toast('新增成功');
+    let promise = editId.value ? editNotice(editId.value, form) : createNotice(form);
+    promise.then(res => {
+      toast(drawerTitle.value + '成功');
+      getData(editId.value ? false : 1);
       formDrawerRef.value.close();
-      getData(1);
     }).finally(() => {
       formDrawerRef.value.hideLoading();
     })
@@ -98,6 +122,11 @@ const handleSubmit = () => {
 
 // 新增公告
 const create = () => {
+  editId.value = 0;
+  resetForm({
+    title: "",
+    content: ""
+  })
   formDrawerRef.value.open()
 };
 
