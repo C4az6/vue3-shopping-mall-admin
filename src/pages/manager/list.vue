@@ -1,5 +1,23 @@
 <template>
   <el-card shadow="never" :body-style="{ padding: '20px' }">
+    <!-- 搜索 -->
+    <el-form :model="searchForm" label-width="80px">
+      <el-row :gutter="20">
+        <el-col :span="8" :offset="0">
+          <el-form-item label="关键词">
+            <el-input size="small" v-model="searchForm.keyword" placeholder="管理员昵称" clearable></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8" :offset="8">
+          <div class="flex items-center justify-center">
+            <el-button size="small" type="primary" @click="getData">搜索</el-button>
+            <el-button size="small" @click="resetSearchForm">重置</el-button>
+          </div>
+        </el-col>
+      </el-row>
+
+    </el-form>
+
     <div class="flex items-center justify-between">
       <el-button type="primary" size="small" @click="create">新增</el-button>
       <el-tooltip class="box-item" effect="dark" content="刷新数据" placement="top">
@@ -62,12 +80,17 @@ import { getManagerList } from '~/api/manager.js';
 import { toast } from '~/composables/utils.js'
 const loading = ref(false);
 const dataList = ref([]);
-const form = reactive({
-
+const searchForm = reactive({
+  keyword: ""
 });
 const currentPage = ref(1);
 const totalCount = ref(0);
 const limit = ref(10);
+
+function resetSearchForm() {
+  searchForm.keyword = "";
+  getData();
+}
 
 const errorHandler = () => true
 
@@ -84,12 +107,11 @@ function create() {
 }
 
 function getData(p = null) {
-  console.log(666);
   if (typeof p == 'number') {
     currentPage.value = p;
   }
   loading.value = true;
-  getManagerList(currentPage.value).then(res => {
+  getManagerList(currentPage.value, searchForm).then(res => {
     console.log("response: ", res);
     dataList.value = res.list;
     totalCount.value = res.totalCount;

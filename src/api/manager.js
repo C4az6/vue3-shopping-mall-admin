@@ -29,7 +29,21 @@ export const updatePassword = (data) => {
 }
 
 // 管理员列表
-export const getManagerList = (page, limit = 10, name) => {
+export const getManagerList = (page, query = {}) => {
   // return axios.get(`admin/manager/${page}?limit=${limit}&keyword=${name}`)
-  return axios.get(`admin/manager/${page}?limit=${limit}`);
+  // return axios.get(`admin/manager/${page}?limit=${limit}`);
+
+  let q = [];
+  for (const key in query) {
+    if (query[key]) {
+      // 如果传递过来的对象中有key,直接把这个对象的key做编码处理转换成字符串后放到数组中
+      q.push(`${key}=${encodeURIComponent(query[key])}`);
+      // "keywords=alexander"
+    }
+    console.log('q: ', q);
+  }
+  let r = q.join("&");
+  r = r ? ("?" + r) : "";
+  return axios.get(`admin/manager/${page}${r}`);
+
 }
