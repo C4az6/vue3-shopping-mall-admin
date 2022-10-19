@@ -111,16 +111,28 @@ import { getManagerList, updateManagerStatus, createManager, updateManager, dele
 import { toast } from '~/composables/utils.js';
 import FormDrawer from '~/components/FormDrawer.vue'
 import ChooseImage from '~/components/ChooseImage.vue'
+import { useInitTable } from '~/composables/useCommon.js'
 
-const loading = ref(false);
-const dataList = ref([]);
 const roles = ref([]);
-const searchForm = reactive({
-  keyword: ""
-});
-const currentPage = ref(1);
-const totalCount = ref(0);
-const limit = ref(10);
+const { loading,
+  dataList,
+  searchForm,
+  currentPage,
+  totalCount,
+  limit,
+  getData } = useInitTable({
+    searchForm: { keyword: "" },
+    getList: getManagerList, onGetListSuccess: res => {
+      console.log("callback res: ", res);
+      dataList.value = res.list.map(item => {
+        item.statusLoading = false;
+        return item;
+      })
+      totalCount.value = res.totalCount;
+      roles.value = res.roles;
+    }
+  });
+
 const formDrawerRef = ref(null);
 const formRef = ref(null);
 const form = reactive({
@@ -165,11 +177,6 @@ function statusChange(status, row) {
   })
 }
 
-function resetSearchForm() {
-  searchForm.keyword = "";
-  getData();
-}
-
 const errorHandler = () => true
 
 function handleEdit(row) {
@@ -211,22 +218,7 @@ function create() {
   formDrawerRef.value.open();
 }
 
-function getData(p = null) {
-  if (typeof p == 'number') {
-    currentPage.value = p;
-  }
-  loading.value = true;
-  getManagerList(currentPage.value, searchForm).then(res => {
-    dataList.value = res.list.map(item => {
-      item.statusLoading = false;
-      return item;
-    })
-    totalCount.value = res.totalCount;
-    roles.value = res.roles;
-  }).finally(() => {
-    loading.value = false;
-  });
-}
+
 
 onMounted(() => getData());
 
