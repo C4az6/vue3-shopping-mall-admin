@@ -56,12 +56,17 @@ import { ref, reactive, computed } from 'vue';
 import { getNoticeList, createNotice, editNotice, removeNotice } from '~/api/notice.js';
 import FormDrawer from '~/components/FormDrawer.vue'
 import { toast } from '~/composables/utils.js'
+import { useInitTable } from '~/composables/useCommon.js'
 
-const loading = ref(false);
-const dataList = ref([]);
-const totalCount = ref(0);
-const currentPage = ref(1);
-const limit = ref(10);
+const { loading,
+  dataList,
+  currentPage,
+  totalCount,
+  limit,
+  getData } = useInitTable({
+    getList: getNoticeList
+  });
+
 const formDrawerRef = ref(null);
 // 抽屉组件的标题
 const drawerTitle = computed(() => editId.value ? '修改' : '新增');
@@ -143,20 +148,6 @@ const handleDelete = ({ row }) => {
   })
 }
 
-// 获取数据
-const getData = (p = null) => {
-  // 处理当前页码发生改变
-  if (typeof p == "number") {
-    currentPage.value = p;
-  }
-  loading.value = true;
-  getNoticeList(currentPage.value).then(res => {
-    dataList.value = res.list;
-    totalCount.value = res.totalCount;
-  }).finally(() => {
-    loading.value = false;
-  })
-}
 
 getData();
 </script>
