@@ -17,6 +17,7 @@ import NoticeList from '~/pages/notice/list.vue'
 import SettingBase from '~/pages/setting/base.vue'
 import CouponList from '~/pages/coupon/list.vue'
 import ManagerList from '~/pages/manager/list.vue'
+import AccessList from '~/pages/access/list.vue'
 
 // 默认路由,所有用户共享
 const routes = [
@@ -123,6 +124,14 @@ const asyncRoutes = [
     component: ManagerList,
     meta: {
       title: '管理员列表'
+    }
+  },
+  {
+    path: "/access/list",
+    name: "/access/list",
+    component: AccessList,
+    meta: {
+      title: '菜单权限管理'
     }
   }
 ]

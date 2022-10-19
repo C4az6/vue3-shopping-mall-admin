@@ -52,6 +52,8 @@ export const useInitTable = (opt = {}) => {
     });
   }
 
+  getData();
+
   function statusChange(status, row) {
     row.statusLoading = true;
     opt.updateStatus(row.id, status).then(res => {

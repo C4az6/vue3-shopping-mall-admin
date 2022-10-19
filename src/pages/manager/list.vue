@@ -18,14 +18,16 @@
 
     </el-form>
 
-    <div class="flex items-center justify-between">
+    <!-- <div class="flex items-center justify-between">
       <el-button type="primary" size="small" @click="create">新增</el-button>
       <el-tooltip class="box-item" effect="dark" content="刷新数据" placement="top">
         <el-icon @click="getData" class="cursor-pointer">
           <Refresh />
         </el-icon>
       </el-tooltip>
-    </div>
+    </div> -->
+
+    <ListHeader @create="create" @refresh="getData"></ListHeader>
 
     <div class="mt-4">
       <el-table :data="dataList" stripe style="width: 100%" v-loading="loading">
@@ -110,6 +112,7 @@ import { ref, reactive, computed, onMounted } from 'vue';
 import { getManagerList, updateManagerStatus, createManager, updateManager, deleteManager } from '~/api/manager.js';
 import FormDrawer from '~/components/FormDrawer.vue'
 import ChooseImage from '~/components/ChooseImage.vue'
+import ListHeader from '~/components/ListHeader.vue';
 import { useInitTable } from '~/composables/useCommon.js'
 import { useInitForm } from '~/composables/useCommon.js';
 
