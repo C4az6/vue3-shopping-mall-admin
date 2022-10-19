@@ -21,7 +21,6 @@ import { toast } from '~/composables/utils.js'
 
 const token = getToken();
 const uploadSuccess = (response, uploadFile, uploadFiles) => {
-  console.log("upload success: ", response);
   emit('success', { response, uploadFile, uploadFiles })
 };
 const uploadError = (error, uploadFile, uploadFiles) => {

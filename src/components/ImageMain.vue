@@ -7,6 +7,7 @@
             <el-image :src="item.url" fit="cover" :lazy="true" class=" w-full h-[150px]" :preview-src-list="[item.url]" :initial-index="0"></el-image>
             <div class="image-title">{{item.name}}</div>
             <div class="flex items-center justify-center p-2">
+              <el-checkbox v-if="openChoose" v-model="item.checked" @change="handleChooseChange(item)"></el-checkbox>
               <el-button type="primary" size="small" text @click="handleRename(item)">重命名</el-button>
               <el-popconfirm width="200" title="是否要删除该图片?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(item.id)">
                 <template #reference>
@@ -36,7 +37,13 @@ import { getImageList, renameImage, deleteImage } from '~/api/image.js';
 import { ref, reactive, onMounted, computed } from 'vue';
 import { showPrompt, toast } from '~/composables/utils.js';
 import UploadFile from '~/components/UploadFile.vue';
-
+const emit = defineEmits(["choose"]);
+defineProps({
+  openChoose: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const total = ref(0);
 const limit = ref(10);
@@ -46,6 +53,16 @@ const loading = ref(false);
 const imageClassId = ref(0);
 // 上传图片抽屉显示
 const drawer = ref(false);
+
+// 过滤出以选中的图片
+const checkedImage = computed(() => imageList.value.filter(e => e.checked));
+const handleChooseChange = (item) => {
+  if (item.checked && checkedImage.value.length > 1) {
+    item.checked = false;
+    return toast('最多只能选中1张', 'error');
+  }
+  emit('choose', checkedImage.value);
+}
 
 // 打开上传图片抽屉弹窗
 const openUploadFile = () => drawer.value = true
@@ -66,7 +83,6 @@ const handleDelete = (id) => {
 
 // 图片重命名事件
 const handleRename = (item) => {
-  console.log("item: ", item);
   showPrompt('重命名', item.name).then(({ value }) => {
     loading.value = true;
     renameImage(item.id, value).then(res => {
@@ -86,8 +102,10 @@ function getData(p = null) {
   loading.value = true;
   getImageList(imageClassId.value, currentPage.value)
     .then((res) => {
-      console.log("res: ", res);
-      imageList.value = res.list;
+      imageList.value = res.list.map(e => {
+        e.checked = false;
+        return e;
+      })
       total.value = res.totalCount;
     })
     .finally(() => {

@@ -1,13 +1,6 @@
 <template>
   <div>
-    <el-drawer
-      v-model="showDrawer"
-      :title="title"
-      direction="rtl"
-      :close-on-click-modal="false"
-      :size="size"
-      :destroy-on-close="destroyOnClose"
-    >
+    <el-drawer v-model="showDrawer" :title="title" direction="rtl" :close-on-click-modal="false" :size="size" :destroy-on-close="destroyOnClose">
       <div class="formDrawer">
         <div class="body">
           <slot></slot>

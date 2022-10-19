@@ -77,20 +77,20 @@
   </el-card>
 
   <FormDrawer ref="formDrawerRef" :title="drawerTitle" @submit="handleSubmit">
-    <el-form :model="form" ref="formRef" :rules="rules" label-width="80px">
-      <el-form-item label="用户名" prop="username">
+    <el-form :model="form" ref="formRef" :rules="rules" label-width="auto">
+      <el-form-item label="用户名">
         <el-input v-model="form.username"></el-input>
       </el-form-item>
 
-      <el-form-item label="密码" prop="password">
+      <el-form-item label="密码">
         <el-input v-model="form.password"></el-input>
       </el-form-item>
 
       <el-form-item label="头像">
-        <el-input v-model="form.avatar"></el-input>
+        <ChooseImage v-model="form.avatar" />
       </el-form-item>
 
-      <el-form-item label="所属管理员" prop="role_id">
+      <el-form-item label="所属管理员">
         <el-select v-model="form.role_id" placeholder="请选择所属管理员">
           <el-option v-for="(item, index) in roles" :key="index" :label="item.name" :value="item.id" />
         </el-select>
@@ -110,6 +110,7 @@ import { ref, reactive, computed, onMounted } from 'vue';
 import { getManagerList, updateManagerStatus, createManager, updateManager, deleteManager } from '~/api/manager.js';
 import { toast } from '~/composables/utils.js';
 import FormDrawer from '~/components/FormDrawer.vue'
+import ChooseImage from '~/components/ChooseImage.vue'
 
 const loading = ref(false);
 const dataList = ref([]);
@@ -145,17 +146,13 @@ const rules = {
 const drawerTitle = computed(() => editId.value ? '修改管理员' : '新增管理员')
 
 function handleSubmit() {
-  formRef.value.validate(valid => {
-    if (!valid) return;
-    console.log('验证通过');
-    formDrawerRef.value.showLoading();
-    let promise = editId.value ? updateManager(editId.value, form) : createManager(form);
-    promise.then(res => {
-      toast(drawerTitle.value + '成功');
-      formDrawerRef.value.close();
-      getData();
-    }).finally(() => formDrawerRef.value.hideLoading());
-  })
+  formDrawerRef.value.showLoading();
+  let promise = editId.value ? updateManager(editId.value, form) : createManager(form);
+  promise.then(res => {
+    toast(drawerTitle.value + '成功');
+    formDrawerRef.value.close();
+    getData();
+  }).finally(() => formDrawerRef.value.hideLoading());
 }
 
 function statusChange(status, row) {
