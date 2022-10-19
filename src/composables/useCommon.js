@@ -1,5 +1,7 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { toast } from '~/composables/utils.js';
+import { getManagerList, updateManagerStatus, createManager, updateManager, deleteManager } from '~/api/manager.js';
+// 列表、分页、搜索
 export const useInitTable = (opt = {}) => {
   const loading = ref(false);
   const dataList = ref([]);
@@ -58,5 +60,62 @@ export const useInitTable = (opt = {}) => {
     totalCount,
     limit,
     getData
+  }
+}
+
+// 新增、修改
+export const useInitForm = (opt = {}) => {
+  const formDrawerRef = ref(null);
+  const formRef = ref(null);
+  const form = reactive({})
+  const editId = ref(0);
+  const rules = opt.rules || {}
+  const defaultForm = opt.form
+
+  const drawerTitle = computed(() => editId.value ? '修改管理员' : '新增管理员')
+
+  function handleSubmit() {
+    formDrawerRef.value.showLoading();
+    let promise = editId.value ? opt.update(editId.value, form) : opt.create(form);
+    promise.then(res => {
+      toast(drawerTitle.value + '成功');
+      formDrawerRef.value.close();
+      opt.getData();
+    }).finally(() => formDrawerRef.value.hideLoading());
+  }
+
+  function resetForm(row = false) {
+    if (formRef.value) formRef.value.clearValidate();
+    // 编辑管理员的情况
+    for (const key in defaultForm) {
+      form[key] = row[key];
+      console.log("key");
+    }
+  }
+
+  function handleEdit(row) {
+    editId.value = row.id;
+    resetForm(row);
+    formDrawerRef.value.open();
+  }
+
+  function create() {
+    console.log("create: ", opt.form);
+    editId.value = 0;
+    resetForm(defaultForm)
+    formDrawerRef.value.open();
+  }
+
+  return {
+    formDrawerRef,
+    formRef,
+    form,
+    editId,
+    rules,
+    drawerTitle,
+    handleSubmit,
+    resetForm,
+    handleEdit,
+    create
   }
 }

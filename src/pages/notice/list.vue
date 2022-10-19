@@ -56,7 +56,7 @@ import { ref, reactive, computed } from 'vue';
 import { getNoticeList, createNotice, editNotice, removeNotice } from '~/api/notice.js';
 import FormDrawer from '~/components/FormDrawer.vue'
 import { toast } from '~/composables/utils.js'
-import { useInitTable } from '~/composables/useCommon.js'
+import { useInitTable, useInitForm } from '~/composables/useCommon.js'
 
 const { loading,
   dataList,
@@ -67,73 +67,36 @@ const { loading,
     getList: getNoticeList
   });
 
-const formDrawerRef = ref(null);
-// 抽屉组件的标题
-const drawerTitle = computed(() => editId.value ? '修改' : '新增');
-const form = reactive({
-  title: "",
-  content: ""
-});
-const formRef = ref(null);
-// 通过这个编辑ID状态来判断当前是新增还是编辑公告
-const editId = ref(0);
 
-const rules = {
-  title: [
-    { required: true, message: "公告标题不能为空", trigger: "blur" },
-  ],
-  content: [
-    { required: true, message: "公告内容不能为空", trigger: "blur" },
-  ],
-};
-
-// 重置表单数据
-function resetForm(row = false) {
-  console.log(!!formRef.value)
-  // 清空表单验证
-  if (formRef.value) formRef.value.clearValidate();
-  if (row) {
-    for (const key in form) {
-      form[key] = row[key];
-    }
-  }
-}
-
-// 编辑公告
-const handleEdit = (row) => {
-  editId.value = row.id;
-  resetForm(row);
-  formDrawerRef.value.open();
-}
-
-// 新增提交
-const handleSubmit = () => {
-  // 表单验证
-  formRef.value.validate(valid => {
-    console.log(valid);
-    if (!valid) return;
-    formDrawerRef.value.showLoading();
-    let promise = editId.value ? editNotice(editId.value, form) : createNotice(form);
-    promise.then(res => {
-      toast(drawerTitle.value + '成功');
-      getData(editId.value ? false : 1);
-      formDrawerRef.value.close();
-    }).finally(() => {
-      formDrawerRef.value.hideLoading();
-    })
-  })
-}
+const { formDrawerRef,
+  formRef,
+  form,
+  editId,
+  rules,
+  drawerTitle,
+  handleSubmit,
+  resetForm,
+  handleEdit,
+  create } = useInitForm(
+    {
+      rules: {
+        title: [
+          { required: true, message: "公告标题不能为空", trigger: "blur" },
+        ],
+        content: [
+          { required: true, message: "公告内容不能为空", trigger: "blur" },
+        ],
+      },
+      form: {
+        title: "",
+        content: ""
+      },
+      getData,
+      update: editNotice,
+      create: createNotice
+    });
 
 
-// 新增公告
-const create = () => {
-  editId.value = 0;
-  resetForm({
-    title: "",
-    content: ""
-  })
-  formDrawerRef.value.open()
-};
 
 // 删除公告
 const handleDelete = ({ row }) => {

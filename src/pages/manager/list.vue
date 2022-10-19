@@ -112,6 +112,7 @@ import { toast } from '~/composables/utils.js';
 import FormDrawer from '~/components/FormDrawer.vue'
 import ChooseImage from '~/components/ChooseImage.vue'
 import { useInitTable } from '~/composables/useCommon.js'
+import { useInitForm } from '~/composables/useCommon.js';
 
 const roles = ref([]);
 const { loading,
@@ -133,39 +134,42 @@ const { loading,
     }
   });
 
-const formDrawerRef = ref(null);
-const formRef = ref(null);
-const form = reactive({
-  username: "",
-  password: "",
-  role_id: null,
-  status: 1,
-  avatar: ""
-})
-const editId = ref(0);
-const rules = {
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-  password: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
-  role_id: [{
-    required: true,
-    message: '请选择管理员所属角色',
-    trigger: 'change',
-  }],
-  status: [],
-  avatar: []
-}
 
-const drawerTitle = computed(() => editId.value ? '修改管理员' : '新增管理员')
+const { formDrawerRef,
+  formRef,
+  form,
+  editId,
+  rules,
+  drawerTitle,
+  handleSubmit,
+  resetForm,
+  handleEdit,
+  create } = useInitForm(
+    {
+      rules: {
+        username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+        password: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
+        role_id: [{
+          required: true,
+          message: '请选择管理员所属角色',
+          trigger: 'change',
+        }],
+        status: [],
+        avatar: []
+      },
+      form: {
+        username: "",
+        password: "",
+        role_id: null,
+        status: 1,
+        avatar: ""
+      },
+      getData,
+      update: updateManager,
+      create: createManager
+    });
 
-function handleSubmit() {
-  formDrawerRef.value.showLoading();
-  let promise = editId.value ? updateManager(editId.value, form) : createManager(form);
-  promise.then(res => {
-    toast(drawerTitle.value + '成功');
-    formDrawerRef.value.close();
-    getData();
-  }).finally(() => formDrawerRef.value.hideLoading());
-}
+
 
 function statusChange(status, row) {
   row.statusLoading = true;
@@ -179,43 +183,12 @@ function statusChange(status, row) {
 
 const errorHandler = () => true
 
-function handleEdit(row) {
-  editId.value = row.id;
-  resetForm(row);
-  formDrawerRef.value.open();
-}
-
 function handleDelete({ row }) {
   loading.value = true;
   deleteManager(row.id).then(res => {
     toast('删除成功');
     getData();
   }).finally(() => loading.value = false)
-}
-
-function resetForm(row = false) {
-  console.log("row: ", row);
-  if (formRef.value) formRef.value.clearValidate();
-  if (row) {
-    // 编辑管理员的情况
-    for (const key in form) {
-      form[key] = row[key];
-      console.log("key");
-    }
-  }
-  console.log("form: ", form);
-}
-
-function create() {
-  editId.value = 0;
-  resetForm({
-    username: "",
-    password: "",
-    role_id: null,
-    status: 1,
-    avatar: ""
-  })
-  formDrawerRef.value.open();
 }
 
 
