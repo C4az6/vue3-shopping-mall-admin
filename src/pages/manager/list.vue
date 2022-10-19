@@ -108,7 +108,6 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
 import { getManagerList, updateManagerStatus, createManager, updateManager, deleteManager } from '~/api/manager.js';
-import { toast } from '~/composables/utils.js';
 import FormDrawer from '~/components/FormDrawer.vue'
 import ChooseImage from '~/components/ChooseImage.vue'
 import { useInitTable } from '~/composables/useCommon.js'
@@ -121,7 +120,9 @@ const { loading,
   currentPage,
   totalCount,
   limit,
-  getData } = useInitTable({
+  getData,
+  statusChange,
+  handleDelete, } = useInitTable({
     searchForm: { keyword: "" },
     getList: getManagerList, onGetListSuccess: res => {
       console.log("callback res: ", res);
@@ -131,7 +132,9 @@ const { loading,
       })
       totalCount.value = res.totalCount;
       roles.value = res.roles;
-    }
+    },
+    updateStatus: updateManagerStatus,
+    delete: deleteManager
   });
 
 
@@ -170,27 +173,7 @@ const { formDrawerRef,
     });
 
 
-
-function statusChange(status, row) {
-  row.statusLoading = true;
-  updateManagerStatus(row.id, status).then(res => {
-    toast('修改状态成功');
-    row.status = status;
-  }).finally(() => {
-    row.statusLoading = false;
-  })
-}
-
 const errorHandler = () => true
-
-function handleDelete({ row }) {
-  loading.value = true;
-  deleteManager(row.id).then(res => {
-    toast('删除成功');
-    getData();
-  }).finally(() => loading.value = false)
-}
-
 
 
 onMounted(() => getData());

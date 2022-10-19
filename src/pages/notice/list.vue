@@ -63,8 +63,11 @@ const { loading,
   currentPage,
   totalCount,
   limit,
-  getData } = useInitTable({
-    getList: getNoticeList
+  getData,
+  statusChange,
+  handleDelete } = useInitTable({
+    getList: getNoticeList,
+    delete: removeNotice
   });
 
 
@@ -95,21 +98,6 @@ const { formDrawerRef,
       update: editNotice,
       create: createNotice
     });
-
-
-
-// 删除公告
-const handleDelete = ({ row }) => {
-  console.log('del notice', row.id);
-  loading.value = true;
-  removeNotice(row.id).then(res => {
-    console.log("response: ", res);
-    toast('删除成功');
-    getData();
-  }).finally(() => {
-    loading.value = false;
-  })
-}
 
 
 getData();

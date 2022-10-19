@@ -1,7 +1,7 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { toast } from '~/composables/utils.js';
 import { getManagerList, updateManagerStatus, createManager, updateManager, deleteManager } from '~/api/manager.js';
-// 列表、分页、搜索
+// 列表、分页、搜索、删除、修改状态
 export const useInitTable = (opt = {}) => {
   const loading = ref(false);
   const dataList = ref([]);
@@ -51,6 +51,25 @@ export const useInitTable = (opt = {}) => {
       loading.value = false;
     });
   }
+
+  function statusChange(status, row) {
+    row.statusLoading = true;
+    opt.updateStatus(row.id, status).then(res => {
+      toast('修改状态成功');
+      row.status = status;
+    }).finally(() => {
+      row.statusLoading = false;
+    })
+  }
+
+
+  function handleDelete({ row }) {
+    loading.value = true;
+    opt.delete(row.id).then(res => {
+      toast('删除成功');
+      getData();
+    }).finally(() => loading.value = false)
+  }
   return {
     loading,
     dataList,
@@ -59,7 +78,9 @@ export const useInitTable = (opt = {}) => {
     currentPage,
     totalCount,
     limit,
-    getData
+    getData,
+    statusChange,
+    handleDelete
   }
 }
 
