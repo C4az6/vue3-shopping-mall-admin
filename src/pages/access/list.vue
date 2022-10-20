@@ -12,12 +12,11 @@
           <span>{{data.name}}</span>
 
           <div class="ml-auto">
-            <el-switch :modelValue="status" :active-value="1" :inactive-value="0"></el-switch>
+            <el-switch :modelValue="data.status" :active-value="1" :inactive-value="0"></el-switch>
 
             <el-button text type="primary" size="small">修改</el-button>
             <el-button text type="primary" size="small">增加</el-button>
             <el-button text type="primary" size="small">删除</el-button>
-
           </div>
         </div>
       </template>
@@ -30,6 +29,7 @@ import ListHeader from '~/components/ListHeader.vue';
 import { getRoleList } from '~/api/rule.js'
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useInitTable } from '~/composables/useCommon.js';
+import { getRuleList, createRule, updateRule, removeRule } from '~/api/rule.js'
 
 const { loading, dataList, getData } = useInitTable({
   getList: getRoleList,
