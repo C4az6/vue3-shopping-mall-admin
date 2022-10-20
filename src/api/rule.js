@@ -7,7 +7,7 @@ export const getRoleList = () => {
 
 // 增加菜单权限
 export const addRule = (data) => {
-  return axios.get('admin/rule', data);
+  return axios.post('admin/rule', data);
 }
 
 // 编辑菜单权限
