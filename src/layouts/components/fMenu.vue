@@ -34,7 +34,7 @@
 // ====== import & init ======
 
 import { ref, reactive, computed } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
 import { useStore } from "vuex";
 
 const router = useRouter();
@@ -51,6 +51,11 @@ const handleSelect = (e) => {
   console.log(e);
   router.push(e);
 };
+
+// 监听路由变化
+onBeforeRouteUpdate((to, from) => {
+  defaultActive.value = to.path;
+})
 
 // ====== computed ======
 // 折叠/展开状态
