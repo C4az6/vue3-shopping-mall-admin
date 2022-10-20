@@ -95,7 +95,7 @@ export const useInitForm = (opt = {}) => {
   const rules = opt.rules || {}
   const defaultForm = opt.form
 
-  const drawerTitle = computed(() => editId.value ? '修改管理员' : '新增管理员')
+  const drawerTitle = computed(() => editId.value ? '修改' : '新增')
 
   function handleSubmit() {
     formDrawerRef.value.showLoading();
