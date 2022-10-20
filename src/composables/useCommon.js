@@ -55,6 +55,7 @@ export const useInitTable = (opt = {}) => {
   getData();
 
   function statusChange(status, row) {
+    console.log("修改状态: ", status);
     row.statusLoading = true;
     opt.updateStatus(row.id, status).then(res => {
       toast('修改状态成功');
@@ -65,9 +66,10 @@ export const useInitTable = (opt = {}) => {
   }
 
 
-  function handleDelete({ row }) {
+  function handleDelete(id) {
+
     loading.value = true;
-    opt.delete(row.id).then(res => {
+    opt.delete(id).then(res => {
       toast('删除成功');
       getData();
     }).finally(() => loading.value = false)

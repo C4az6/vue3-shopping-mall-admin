@@ -9,14 +9,18 @@
           <el-icon v-if="data.icon" :size="16" class="ml-2">
             <component :is="data.icon"></component>
           </el-icon>
-          <span>{{data.name}}</span>
+          <span class="ml-2">{{data.name}}</span>
 
           <div class="ml-auto">
-            <el-switch :modelValue="data.status" :active-value="1" :inactive-value="0"></el-switch>
+            <el-switch :modelValue="data.status" :active-value="1" :inactive-value="0" @change="statusChange($event,data)"></el-switch>
 
-            <el-button text type="primary" size="small">修改</el-button>
-            <el-button text type="primary" size="small">增加</el-button>
-            <el-button text type="primary" size="small">删除</el-button>
+            <el-button text type="primary" size="small" @click.stop="handleEdit(data)">修改</el-button>
+            <el-button text type="primary" size="small" @click.stop="addChild(data.id)">增加</el-button>
+            <el-popconfirm title="是否要删除该记录？" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(data.id)">
+              <template #reference>
+                <el-button text type="primary" size="small">删除</el-button>
+              </template>
+            </el-popconfirm>
           </div>
         </div>
       </template>
@@ -38,7 +42,7 @@
           <el-input v-model="form.name" placeholder="名称" style="width: 30%"></el-input>
         </el-form-item>
 
-        <el-form-item label="菜单图标" prop="icon" v-if="form.menu == 1">
+        <el-form-item class="flex items-center" label="菜单图标" prop="icon" v-if="form.menu == 1">
           <IconSelect v-model="form.icon"></IconSelect>
         </el-form-item>
 
@@ -76,19 +80,21 @@ import ListHeader from '~/components/ListHeader.vue';
 import IconSelect from '~/components/IconSelect.vue';
 import { ref } from 'vue';
 import { useInitTable, useInitForm } from '~/composables/useCommon.js';
-import { getRoleList, addRule, updateRule, removeRule } from '~/api/rule.js';
+import { getRoleList, addRule, updateRule, removeRule, updateRoleStatus } from '~/api/rule.js';
 import FormDrawer from '~/components/FormDrawer.vue';
 
 const options = ref([]);
 const defaultExpandedKeys = ref([]);
 
-const { loading, dataList, getData } = useInitTable({
+const { loading, dataList, getData, handleDelete, statusChange } = useInitTable({
   getList: getRoleList,
   onGetListSuccess: (res) => {
     options.value = res.rules;
     dataList.value = res.list;
     defaultExpandedKeys.value = res.list.map(e => e.id);
-  }
+  },
+  updateStatus: updateRoleStatus,
+  delete: removeRule
 });
 
 const { formDrawerRef, fromRef, form, rules, drawerTitle, handleSubmit, create, handleEdit } = useInitForm({
@@ -109,6 +115,12 @@ const { formDrawerRef, fromRef, form, rules, drawerTitle, handleSubmit, create, 
   create: addRule
 });
 
+// 添加子菜单分类
+const addChild = (id) => {
+  create();
+  form.rule_id = id;
+  form.status = 1
+};
 
 </script>
 

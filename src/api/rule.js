@@ -17,5 +17,10 @@ export const updateRule = (id, data) => {
 
 // 删除菜单权限
 export const removeRule = (id) => {
-  return axios.post(`rule/${id}/delete`);
+  return axios.post(`admin/rule/${id}/delete`);
+}
+
+// 修改菜单状态
+export const updateRoleStatus = (id, status) => {
+  return axios.post(`admin/rule/${id}/update_status`, { status })
 }
