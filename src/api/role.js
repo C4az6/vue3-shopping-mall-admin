@@ -26,6 +26,8 @@ export const updateRoleStatus = (id, status) => {
 }
 
 // 配置角色权限
-export const setRules = (data) => {
-  return axios.get(`admin/role/set_rules`, data)
+export const setRoleRules = (id, rule_ids) => {
+  return axios.post(`/admin/role/set_rules`, {
+    id, rule_ids
+  })
 }
