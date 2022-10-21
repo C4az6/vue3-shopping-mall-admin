@@ -8,10 +8,8 @@
               <el-card shadow="hover" class="border-0">
                 <template #header>
                   <div class="flex justify-between">
-                    <el-skeleton-item
-                      variant="text"
-                      style="width: 50%"
-                    /><el-skeleton-item variant="text" style="width: 10%" />
+                    <el-skeleton-item variant="text" style="width: 50%" />
+                    <el-skeleton-item variant="text" style="width: 10%" />
                   </div>
                 </template>
 
@@ -30,12 +28,7 @@
         </el-col>
       </template>
 
-      <el-col
-        :span="6"
-        :offset="0"
-        v-for="(item, index) in panels"
-        :key="index"
-      >
+      <el-col :span="6" :offset="0" v-for="(item, index) in panels" :key="index">
         <el-card shadow="hover" class="border-0">
           <template #header>
             <div class="flex justify-between">
@@ -66,17 +59,8 @@
         <IndexChart v-permission="['getStatistics3,GET']"></IndexChart>
       </el-col>
       <el-col :span="12" :offset="0" v-permission="['getStatistics2,GET']">
-        <IndexCard
-          title="店铺及商品提示"
-          tip="店铺及商品提示"
-          :btns="goods"
-          class="mb-3"
-        ></IndexCard>
-        <IndexCard
-          title="交易提示"
-          tip="需要立即处理的交易订单"
-          :btns="order"
-        ></IndexCard>
+        <IndexCard title="店铺及商品提示" tip="店铺及商品提示" :btns="goods" class="mb-3"></IndexCard>
+        <IndexCard title="交易提示" tip="需要立即处理的交易订单" :btns="order"></IndexCard>
       </el-col>
     </el-row>
   </div>
