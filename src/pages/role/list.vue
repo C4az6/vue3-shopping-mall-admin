@@ -49,6 +49,11 @@
       </el-form>
     </FormDrawer>
 
+    <!-- 配置权限表单 -->
+    <FormDrawer ref="setRuleFormDrawerRef" title="权限配置" @submit="handleSetRuleSubmit">
+      <el-tree-v2 :data="ruleList" :props="{label: 'name', children: 'child'}" show-checkbox :height="treeHeight"></el-tree-v2>
+    </FormDrawer>
+
   </el-card>
 
 </template>
@@ -57,6 +62,7 @@
 import { ref } from 'vue';
 import ListHeader from '~/components/ListHeader.vue';
 import { getRoleList, addRole, updateRole, deleteRole, updateRoleStatus, setRules } from '~/api/role.js';
+import { getRoleList as getRuleList } from '~/api/rule.js';
 import { useInitTable, useInitForm } from '~/composables/useCommon.js';
 import FormDrawer from '~/components/FormDrawer.vue';
 
@@ -103,6 +109,23 @@ const {
   update: updateRole,
   create: addRole
 });
+
+// 配置权限表单的状态
+const setRuleFormDrawerRef = ref(null);
+const ruleList = ref([]);
+const treeHeight = ref(0);
+const roleId = ref(0);
+
+const openSetRule = row => {
+  roleId.value = row.id;
+  treeHeight.value = window.innerHeight - 170
+  getRuleList().then(res => {
+    ruleList.value = res.list;
+    setRuleFormDrawerRef.value.open();
+  })
+};
+
+const handleSetRuleSubmit = () => { }
 
 </script>
 
