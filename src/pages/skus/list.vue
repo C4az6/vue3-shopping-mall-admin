@@ -1,9 +1,10 @@
 <template>
   <el-card shadow="never" class="border-0">
     <!-- 新增&刷新 -->
-    <ListHeader @create="create" @refresh="getData"></ListHeader>
+    <ListHeader layout="create,delete,refresh" @create="create" @refresh="getData" @delete="handleMultiDelete"></ListHeader>
 
-    <el-table :data="dataList" stripe v-loading="loading" style="width: 100%;">
+    <el-table ref="multipleTableRef" @selection-change="handleSelectionChange" :data="dataList" stripe v-loading="loading" style="width: 100%;">
+      <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="规格名称" />
 
       <el-table-column prop="default" label="规格值" width="380" />
@@ -77,7 +78,11 @@ const {
   limit,
   getData,
   handleDelete,
-  statusChange
+  statusChange,
+  multipleTableRef,
+  multiSelectionIds,
+  handleSelectionChange,
+  handleMultiDelete
 } = useInitTable({
   getList: getSkuList,
   delete: deleteSku,
