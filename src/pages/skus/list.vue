@@ -33,7 +33,7 @@
       <el-pagination background layout="prev, pager, next" :total="totalCount" :current-page="currentPage" :page-size="limit" @current-change="getData"></el-pagination>
     </div>
 
-    <FormDrawer ref="formDrawerRef" :title="drawerTitle" @submit="handleSubmit">
+    <FormDrawer ref="formDrawerRef" :title="drawerTitle" @submit="handleSubmit" destroyOnClose>
       <el-form :model="form" ref="formRef" :rules="rules" label-width="80px">
         <el-form-item label="规格名称" prop="name">
           <el-input v-model="form.name" placeholder="规格名称"></el-input>
@@ -51,8 +51,7 @@
         </el-form-item>
 
         <el-form-item label="规格值" prop="default">
-          <el-input v-model="form.default">
-          </el-input>
+          <TagInput v-model="form.default"></TagInput>
         </el-form-item>
       </el-form>
     </FormDrawer>
@@ -68,6 +67,7 @@ import { getSkuList, addSku, updateSku, deleteSku, updateSkuStatus } from '~/api
 import { useInitTable, useInitForm } from '~/composables/useCommon.js';
 import FormDrawer from '~/components/FormDrawer.vue';
 import { toast } from '~/composables/utils.js'
+import TagInput from '~/components/TagInput.vue';
 
 const {
   dataList,
