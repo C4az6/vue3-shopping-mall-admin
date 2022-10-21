@@ -5,22 +5,15 @@ import { getManagerList, updateManagerStatus, createManager, updateManager, dele
 export const useInitTable = (opt = {}) => {
   const loading = ref(false);
   const dataList = ref([]);
-  /*  const searchForm = reactive({
-     keyword: ""
-   }); */
+
   const currentPage = ref(1);
   const totalCount = ref(0);
   const limit = ref(10);
 
-  /* function resetSearchForm() {
-    searchForm.keyword = "";
-    getData();
-  } */
 
   let searchForm = null;
   let resetSearchForm = null;
   if (opt.searchForm) {
-    // searchForm = reactive({ ...opt.searchForm });
     searchForm = reactive(opt.searchForm);
     resetSearchForm = () => {
       for (const key in opt.searchForm) {
@@ -36,16 +29,12 @@ export const useInitTable = (opt = {}) => {
     }
     loading.value = true;
     opt.getList(currentPage.value, searchForm).then(res => {
+      console.log("role list: ", res);
       if (opt.onGetListSuccess && typeof opt.onGetListSuccess == 'function') {
         opt.onGetListSuccess(res)
       } else {
-        /* dataList.value = res.list.map(item => {
-          item.statusLoading = false;
-          return item;
-        }) */
         dataList.value = res.list;
         totalCount.value = res.totalCount;
-        // roles.value = res.roles;
       }
     }).finally(() => {
       loading.value = false;
@@ -55,7 +44,6 @@ export const useInitTable = (opt = {}) => {
   getData();
 
   function statusChange(status, row) {
-    console.log("修改状态: ", status);
     row.statusLoading = true;
     opt.updateStatus(row.id, status).then(res => {
       toast('修改状态成功');
@@ -114,7 +102,6 @@ export const useInitForm = (opt = {}) => {
     // 编辑管理员的情况
     for (const key in defaultForm) {
       form[key] = row[key];
-      console.log("key");
     }
   }
 
@@ -125,7 +112,6 @@ export const useInitForm = (opt = {}) => {
   }
 
   function create() {
-    console.log("create: ", opt.form);
     editId.value = 0;
     resetForm(defaultForm)
     formDrawerRef.value.open();
