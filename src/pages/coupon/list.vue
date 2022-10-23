@@ -1,7 +1,7 @@
 <template>
   <el-card shadow="never" class="border-0">
     <!-- 新增&刷新 -->
-    <ListHeader @create="handleCreate" @refresh="getData"></ListHeader>
+    <ListHeader @create="create" @refresh="getData"></ListHeader>
 
     <el-table :data="dataList" stripe style="width: 100%" v-loading="loading">
       <el-table-column label="优惠券名称" width="350">
@@ -36,16 +36,61 @@
       <el-pagination background layout="prev,pager,next" :total="totalCount" :current-page="currentPage" :page-size="limit" @current-change="getData"></el-pagination>
     </div>
 
+    <FormDrawer ref="formDrawerRef" :title="drawerTitle" @submit="handleSubmit">
+      <el-form :model="form" ref="formRef" :rules="rules" label-width="80px">
+        <el-form-item label="公告标题" prop="title">
+          <el-input v-model="form.title" placeholder="公告标题"></el-input>
+        </el-form-item>
+        <el-form-item label="公告标题" prop="title">
+          <el-input v-model="form.title" placeholder="公告标题"></el-input>
+        </el-form-item>
+
+        <el-form-item label="公告标题" prop="title">
+          <el-input v-model="form.title" placeholder="公告标题"></el-input>
+        </el-form-item>
+      </el-form>
+    </FormDrawer>
+
   </el-card>
 
 </template>
 
 <script setup>
 import ListHeader from '~/components/ListHeader.vue';
-// import { } from "~/api/coupon.js";
+import FormDrawer from '~/components/FormDrawer.vue';
+import { getCouponList, addCoupon, updateCoupon, deleteCoupon, disableCoupon } from "~/api/coupon.js";
 import { useInitTable, useInitForm } from '~/composables/useCommon.js'
 
 
+const {
+  dataList,
+  loading,
+  currentPage,
+  totalCount,
+  limit,
+  getData,
+  handleDelete
+} = useInitTable({
+  getList: getCouponList,
+  delete: deleteCoupon
+});
+
+const {
+  formDrawerRef,
+  formRef,
+  form,
+  rules,
+  drawerTitle,
+  handleSubmit,
+  create,
+  handleEdit
+} = useInitForm({
+  form: {},
+  rules: {},
+  getData,
+  update: updateCoupon,
+  create: addCoupon
+});
 
 </script>
 
