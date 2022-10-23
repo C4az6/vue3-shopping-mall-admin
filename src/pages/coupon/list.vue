@@ -22,10 +22,16 @@
       <el-table-column prop="used" label="已使用"></el-table-column>
       <el-table-column label="操作" width="180" align="center">
         <template #default="{row}">
-          <el-button type="primary" size="small" text @click="handleEdit(row)">修改</el-button>
-          <el-popconfirm title="是否要删除该优惠券?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(row.id)">
+          <el-button v-if="row.statusText === '未开始'" type="primary" size="small" text @click="handleEdit(row)">修改</el-button>
+          <el-popconfirm v-if="row.statusText !== '领取中'" title="是否要删除该优惠券?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(row.id)">
             <template #reference>
               <el-button type="primary" size="small" text>删除</el-button>
+            </template>
+          </el-popconfirm>
+
+          <el-popconfirm v-if="row.statusText === '领取中'" title="是否让该优惠券失效?" confirmButtonText="确认" cancelButtonText="取消" @confirm="statusChange(0,row)">
+            <template #reference>
+              <el-button type="primary" size="small" text>失效</el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -120,7 +126,8 @@ const {
   totalCount,
   limit,
   getData,
-  handleDelete
+  handleDelete,
+  statusChange
 } = useInitTable({
   getList: getCouponList,
   onGetListSuccess: res => {
@@ -131,7 +138,8 @@ const {
     })
     totalCount.value = res.totalCount;
   },
-  delete: deleteCoupon
+  delete: deleteCoupon,
+  updateStatus: disableCoupon
 });
 
 const {
