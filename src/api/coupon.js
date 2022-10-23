@@ -13,7 +13,7 @@ export const updateCoupon = (id, data) => {
 }
 
 export const deleteCoupon = id => {
-  return axios.post(`coupon/${id}/delete`);
+  return axios.post(`admin/coupon/${id}/delete`);
 }
 
 

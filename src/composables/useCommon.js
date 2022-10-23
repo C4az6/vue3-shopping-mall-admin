@@ -29,7 +29,6 @@ export const useInitTable = (opt = {}) => {
     }
     loading.value = true;
     opt.getList(currentPage.value, searchForm).then(res => {
-      console.log("role list: ", res);
       if (opt.onGetListSuccess && typeof opt.onGetListSuccess == 'function') {
         opt.onGetListSuccess(res)
       } else {
