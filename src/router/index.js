@@ -20,6 +20,7 @@ import ManagerList from '~/pages/manager/list.vue'
 import AccessList from '~/pages/access/list.vue'
 import RoleList from '~/pages/role/list.vue'
 import SkusList from '~/pages/skus/list.vue';
+import test from '~/pages/test/test.vue'
 
 // 默认路由,所有用户共享
 const routes = [
@@ -34,6 +35,14 @@ const routes = [
     component: Login,
     meta: {
       title: "登录页"
+    }
+  },
+  {
+    path: '/test',
+    name: 'test',
+    component: test,
+    meta: {
+      title: '测试页面'
     }
   },
   {

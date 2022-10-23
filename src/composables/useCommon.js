@@ -115,7 +115,15 @@ export const useInitForm = (opt = {}) => {
 
   function handleSubmit() {
     formDrawerRef.value.showLoading();
-    let promise = editId.value ? opt.update(editId.value, form) : opt.create(form);
+
+    let body = {};
+    if (opt.beforeSubmit && typeof opt.beforeSubmit == 'function') {
+      body = opt.beforeSubmit({ ...form });
+    } else {
+      body = form
+    }
+
+    let promise = editId.value ? opt.update(editId.value, body) : opt.create(body);
     promise.then(res => {
       toast(drawerTitle.value + '成功');
       formDrawerRef.value.close();
