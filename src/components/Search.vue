@@ -34,7 +34,7 @@ defineProps({
   model: Object
 })
 
-defineEmits("search", "reset");
+defineEmits(["search", "reset"]);
 
 const slots = useSlots();
 
