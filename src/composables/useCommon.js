@@ -14,6 +14,7 @@ export const useInitTable = (opt = {}) => {
   let searchForm = null;
   let resetSearchForm = null;
   if (opt.searchForm) {
+    console.log("opt.searchForm: ", opt.searchForm);
     searchForm = reactive(opt.searchForm);
     resetSearchForm = () => {
       for (const key in opt.searchForm) {

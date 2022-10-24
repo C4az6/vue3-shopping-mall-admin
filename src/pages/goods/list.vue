@@ -7,41 +7,21 @@
     </el-tabs>
 
     <el-card shadow="never" :body-style="{ padding: '20px' }">
-      <!-- 搜索 -->
-      <el-form :model="searchForm" label-width="80px">
-        <el-row :gutter="20">
-          <el-col :span="8" :offset="0">
-            <el-form-item label="关键词">
-              <el-input size="small" v-model="searchForm.title" placeholder="商品名称" clearable></el-input>
-            </el-form-item>
-          </el-col>
 
-          <el-col :span="8" :offset="0" v-if="showSearch">
-            <el-form-item label="商品分类" prop="category_id">
-              <el-select v-model="searchForm.category_id" placeholder="请选择商品分类" clearable>
-                <el-option v-for="item in categoryList" :key="item.id" :label="item.name" :value="item.id">
-                </el-option>
-              </el-select>
+      <Search @search="getData" :model="searchForm" @reset="resetSearchForm">
+        <SearchItem label="关键词">
+          <el-input size="small" v-model="searchForm.title" placeholder="商品名称" clearable></el-input>
+        </SearchItem>
 
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8" :offset="showSearch ? 0 : 8">
-            <div class="flex items-center justify-center">
-              <el-button size="small" type="primary" @click="getData">搜索</el-button>
-              <el-button size="small" @click="resetSearchForm">重置</el-button>
-              <el-button size="small" text type="warning" @click="showSearch = !showSearch">
-                {{showSearch ? '收起' : '展开'}}
-                <el-icon>
-                  <ArrowUp v-if="showSearch"></ArrowUp>
-                  <ArrowDown v-else></ArrowDown>
-                </el-icon>
-              </el-button>
-            </div>
-          </el-col>
-        </el-row>
-
-      </el-form>
+        <template #show>
+          <SearchItem label="商品分类">
+            <el-select v-model="searchForm.category_id" placeholder="请选择商品分类" clearable>
+              <el-option v-for="item in categoryList" :key="item.id" :label="item.name" :value="item.id">
+              </el-option>
+            </el-select>
+          </SearchItem>
+        </template>
+      </Search>
 
       <ListHeader @create="create" @refresh="getData"></ListHeader>
 
@@ -154,6 +134,8 @@ import ListHeader from '~/components/ListHeader.vue';
 import { useInitTable } from '~/composables/useCommon.js'
 import { useInitForm } from '~/composables/useCommon.js';
 import { getCategoryList } from '~/api/category.js';
+import Search from '~/components/Search.vue'
+import SearchItem from '~/components/SearchItem.vue'
 
 
 
@@ -165,6 +147,7 @@ const { loading,
   limit,
   getData,
   statusChange,
+  resetSearchForm,
   handleDelete, } = useInitTable({
     searchForm: { title: "", tab: "all", category_id: null },
     getList: getGoodsList, onGetListSuccess: res => {
@@ -247,7 +230,7 @@ const tabbars = [
 const categoryList = ref([]);
 getCategoryList().then(res => categoryList.value = res);
 
-const showSearch = ref(false);
+
 
 
 </script>
