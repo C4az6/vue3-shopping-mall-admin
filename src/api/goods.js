@@ -1,9 +1,7 @@
 import axios from '~/axios';
-
+import { queryParams } from '~/composables/utils.js'
 export const getGoodsList = (page, query = {}) => {
-  return axios.get(`admin/goods/${page}`, {
-    params: query
-  });
+  return axios.get(`admin/goods/${page}` + queryParams(query));
 }
 
 // 批量上架/下架商品

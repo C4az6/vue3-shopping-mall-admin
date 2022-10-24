@@ -42,6 +42,7 @@ export const showPrompt = (tip, value = "") => {
 
 // 将query对象转成url参数
 export const queryParams = query => {
+  console.log("query params: ", query);
   let q = [];
   for (const key in query) {
     if (query[key]) {
