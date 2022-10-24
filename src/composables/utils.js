@@ -38,5 +38,18 @@ export const showPrompt = (tip, value = "") => {
     cancelButtonText: '取消',
     inputValue: value
   })
+}
 
+// 将query对象转成url参数
+export const queryParams = query => {
+  let q = [];
+  for (const key in query) {
+    if (query[key]) {
+      q.push(`${key}=${encodeURIComponent(query[key])}`);
+    }
+    console.log('q: ', q);
+  }
+  let r = q.join("&");
+  r = r ? ("?" + r) : "";
+  return r;
 }
