@@ -15,24 +15,33 @@
               <el-input size="small" v-model="searchForm.title" placeholder="商品名称" clearable></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8" :offset="8">
+
+          <el-col :span="8" :offset="0" v-if="showSearch">
+            <el-form-item label="商品分类" prop="category_id">
+              <el-select v-model="searchForm.category_id" placeholder="请选择商品分类" clearable>
+                <el-option v-for="item in categoryList" :key="item.id" :label="item.name" :value="item.id">
+                </el-option>
+              </el-select>
+
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="8" :offset="showSearch ? 0 : 8">
             <div class="flex items-center justify-center">
               <el-button size="small" type="primary" @click="getData">搜索</el-button>
               <el-button size="small" @click="resetSearchForm">重置</el-button>
+              <el-button size="small" text type="warning" @click="showSearch = !showSearch">
+                {{showSearch ? '收起' : '展开'}}
+                <el-icon>
+                  <ArrowUp v-if="showSearch"></ArrowUp>
+                  <ArrowDown v-else></ArrowDown>
+                </el-icon>
+              </el-button>
             </div>
           </el-col>
         </el-row>
 
       </el-form>
-
-      <!-- <div class="flex items-center justify-between">
-      <el-button type="primary" size="small" @click="create">新增</el-button>
-      <el-tooltip class="box-item" effect="dark" content="刷新数据" placement="top">
-        <el-icon @click="getData" class="cursor-pointer">
-          <Refresh />
-        </el-icon>
-      </el-tooltip>
-    </div> -->
 
       <ListHeader @create="create" @refresh="getData"></ListHeader>
 
@@ -45,9 +54,9 @@
                 <div class="flex-1">
                   <p>{{row.title}}</p>
                   <div>
-                    <span class="text-rose-500">${{row.min_price}}</span>
+                    <span class="text-rose-500">￥{{row.min_price}}</span>
                     <el-divider direction="vertical"></el-divider>
-                    <span class=" text-gray-500 text-xs">${{row.min_oprice}}</span>
+                    <span class=" text-gray-500 text-xs">￥{{row.min_oprice}}</span>
                   </div>
                   <!-- row.category 如果是undefined 则会显示未分类 -->
                   <p class="text-gray-400 text-xs mb-1">分类: {{row.category?.name ?? '未分类'}}</p>
@@ -144,6 +153,7 @@ import ChooseImage from '~/components/ChooseImage.vue'
 import ListHeader from '~/components/ListHeader.vue';
 import { useInitTable } from '~/composables/useCommon.js'
 import { useInitForm } from '~/composables/useCommon.js';
+import { getCategoryList } from '~/api/category.js';
 
 
 
@@ -232,6 +242,12 @@ const tabbars = [
     name: "回收站"
   }
 ]
+
+// 商品分类
+const categoryList = ref([]);
+getCategoryList().then(res => categoryList.value = res);
+
+const showSearch = ref(false);
 
 
 </script>
