@@ -7,7 +7,6 @@
     </el-tabs>
 
     <el-card shadow="never" :body-style="{ padding: '20px' }">
-
       <Search @search="getData" :model="searchForm" @reset="resetSearchForm">
         <SearchItem label="关键词">
           <el-input size="small" v-model="searchForm.title" placeholder="商品名称" clearable></el-input>
@@ -23,24 +22,36 @@
         </template>
       </Search>
 
-      <ListHeader @create="create" @refresh="getData"></ListHeader>
+      <ListHeader layout="create,delete,refresh" @create="create" @refresh="getData" @delete="handleMultiDelete">
+        <el-button size="small" @click="handleMultiStatusChange(1)" v-if="searchForm.tab == 'all' || searchForm.tab == 'off'">上架</el-button>
+        <el-button size="small" @click="handleMultiStatusChange(0)" v-if="searchForm.tab == 'all' || searchForm.tab == 'saling'">下架</el-button>
+
+      </ListHeader>
 
       <div class="mt-4">
-        <el-table :data="dataList" stripe style="width: 100%" v-loading="loading">
+        <el-table ref="multipleTableRef" @selection-change="handleSelectionChange" :data="dataList" stripe style="width: 100%" v-loading="loading">
+
+          <el-table-column type="selection" width="55">
+          </el-table-column>
+
           <el-table-column prop="title" label="商品" width="300">
-            <template #default="{row}">
+            <template #default="{ row }">
               <div class="flex">
-                <el-image class="mr-3 rounded" :src="row.cover" fit="cover" :lazy="true" style="width:50px;height:50px;"></el-image>
+                <el-image class="mr-3 rounded" :src="row.cover" fit="cover" :lazy="true" style="width: 50px; height: 50px"></el-image>
                 <div class="flex-1">
-                  <p>{{row.title}}</p>
+                  <p>{{ row.title }}</p>
                   <div>
-                    <span class="text-rose-500">￥{{row.min_price}}</span>
+                    <span class="text-rose-500">￥{{ row.min_price }}</span>
                     <el-divider direction="vertical"></el-divider>
-                    <span class=" text-gray-500 text-xs">￥{{row.min_oprice}}</span>
+                    <span class="text-gray-500 text-xs">￥{{ row.min_oprice }}</span>
                   </div>
                   <!-- row.category 如果是undefined 则会显示未分类 -->
-                  <p class="text-gray-400 text-xs mb-1">分类: {{row.category?.name ?? '未分类'}}</p>
-                  <p class="text-gray-400 text-xs">创建时间: {{row.create_time}}</p>
+                  <p class="text-gray-400 text-xs mb-1">
+                    分类: {{ row.category?.name ?? "未分类" }}
+                  </p>
+                  <p class="text-gray-400 text-xs">
+                    创建时间: {{ row.create_time }}
+                  </p>
                 </div>
               </div>
             </template>
@@ -50,20 +61,20 @@
           </el-table-column>
 
           <el-table-column label="商品状态" width="100" align="center">
-            <template #default="{row}">
+            <template #default="{ row }">
               <el-tag :type="row.status ? 'success' : 'danger'" size="small">
-                {{row.status ? '上架' : '仓库'}}
+                {{ row.status ? "上架" : "仓库" }}
               </el-tag>
             </template>
           </el-table-column>
 
           <el-table-column label="审核状态" width="120" align="center" v-if="searchForm.tab !== 'delete'">
-            <template #default="{row}">
+            <template #default="{ row }">
               <div v-if="row.ischeck == 0">
                 <el-button type="success" size="small" plain>审核通过</el-button>
                 <el-button class="mt-3 !ml-0" type="danger" size="small" plain>审核拒绝</el-button>
               </div>
-              <span v-else>{{row.ischeck == 1 ? '通过' : '拒绝'}}</span>
+              <span v-else>{{ row.ischeck == 1 ? "通过" : "拒绝" }}</span>
             </template>
           </el-table-column>
 
@@ -116,35 +127,27 @@
         </el-form-item>
 
         <el-form-item label="单位" prop="unit">
-          <el-input v-model="form.unit" placeholder="请输入单位" style="width: 50%;"></el-input>
+          <el-input v-model="form.unit" placeholder="请输入单位" style="width: 50%"></el-input>
         </el-form-item>
 
         <el-form-item label="总库存" prop="stock">
-          <el-input v-model="form.stock" type="number" style="width: 40%;"></el-input>
-          <template #append>
-            件
-          </template>
+          <el-input v-model="form.stock" type="number" style="width: 40%"></el-input>
+          <template #append> 件 </template>
         </el-form-item>
 
         <el-form-item label="库存预警" prop="min_stock">
-          <el-input v-model="form.min_stock" type="number" style="width: 40%;"></el-input>
-          <template #append>
-            件
-          </template>
+          <el-input v-model="form.min_stock" type="number" style="width: 40%"></el-input>
+          <template #append> 件 </template>
         </el-form-item>
 
         <el-form-item label="最低销售价" prop="min_price">
-          <el-input v-model="form.min_price" type="number" style="width: 40%;"></el-input>
-          <template #append>
-            元
-          </template>
+          <el-input v-model="form.min_price" type="number" style="width: 40%"></el-input>
+          <template #append> 元 </template>
         </el-form-item>
 
         <el-form-item label="最低原价" prop="min_oprice">
-          <el-input v-model="form.min_oprice" type="number" style="width: 40%;"></el-input>
-          <template #append>
-            元
-          </template>
+          <el-input v-model="form.min_oprice" type="number" style="width: 40%"></el-input>
+          <template #append> 元 </template>
         </el-form-item>
 
         <el-form-item label="库存显示" prop="stock_display">
@@ -161,49 +164,57 @@
           </el-radio-group>
         </el-form-item>
       </el-form>
-
     </FormDrawer>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue';
-import { getGoodsList, updateGoodsStatus, createGoods, updateGoods, deleteGoods } from '~/api/goods.js';
-import FormDrawer from '~/components/FormDrawer.vue'
-import ChooseImage from '~/components/ChooseImage.vue'
-import ListHeader from '~/components/ListHeader.vue';
-import { useInitTable } from '~/composables/useCommon.js'
-import { useInitForm } from '~/composables/useCommon.js';
-import { getCategoryList } from '~/api/category.js';
-import Search from '~/components/Search.vue'
-import SearchItem from '~/components/SearchItem.vue'
+import { ref, reactive, computed, onMounted } from "vue";
+import {
+  getGoodsList,
+  updateGoodsStatus,
+  createGoods,
+  updateGoods,
+  deleteGoods,
+} from "~/api/goods.js";
+import FormDrawer from "~/components/FormDrawer.vue";
+import ChooseImage from "~/components/ChooseImage.vue";
+import ListHeader from "~/components/ListHeader.vue";
+import { useInitTable, useInitForm } from "~/composables/useCommon.js";
+import { getCategoryList } from "~/api/category.js";
+import Search from "~/components/Search.vue";
+import SearchItem from "~/components/SearchItem.vue";
 
-
-
-const { loading,
+const {
+  loading,
   dataList,
   searchForm,
   currentPage,
   totalCount,
   limit,
   getData,
-  statusChange,
   resetSearchForm,
-  handleDelete, } = useInitTable({
-    searchForm: { title: "", tab: "all", category_id: null },
-    getList: getGoodsList, onGetListSuccess: res => {
-      dataList.value = res.list.map(item => {
-        item.statusLoading = false;
-        return item;
-      })
-      totalCount.value = res.totalCount;
-    },
-    updateStatus: updateGoodsStatus,
-    delete: deleteGoods
-  });
+  handleDelete,
+  multipleTableRef,
+  handleSelectionChange,
+  handleMultiDelete,
+  handleMultiStatusChange
+} = useInitTable({
+  searchForm: { title: "", tab: "all", category_id: null },
+  getList: getGoodsList,
+  onGetListSuccess: (res) => {
+    dataList.value = res.list.map((item) => {
+      item.statusLoading = false;
+      return item;
+    });
+    totalCount.value = res.totalCount;
+  },
+  updateStatus: updateGoodsStatus,
+  delete: deleteGoods,
+});
 
-
-const { formDrawerRef,
+const {
+  formDrawerRef,
   formRef,
   form,
   editId,
@@ -212,76 +223,71 @@ const { formDrawerRef,
   handleSubmit,
   resetForm,
   handleEdit,
-  create } = useInitForm(
-    {
-      rules: {
-        username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-        password: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
-        role_id: [{
-          required: true,
-          message: '请选择管理员所属角色',
-          trigger: 'change',
-        }],
-        status: [],
-        avatar: []
+  create,
+} = useInitForm({
+  rules: {
+    username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+    password: [{ required: true, message: "密码不能为空", trigger: "blur" }],
+    role_id: [
+      {
+        required: true,
+        message: "请选择管理员所属角色",
+        trigger: "change",
       },
-      form: {
-        title: null,  // 商品名称
-        category_id: null,    // 商品分类ID
-        cover: null,    // 商品封面
-        desc: null,    // 商品描述
-        unit: "件",   // 商品单位
-        stock: 100,   // 总库存
-        min_stock: 10,    // 库存预警
-        status: 1,  // 是否上架 0仓库 1上架
-        stock_display: 1,  // 库存显示 0隐藏 1显示
-        min_price: 0,   // 最低销售价
-        min_oprice: 0   // 最低原价
+    ],
+    status: [],
+    avatar: [],
+  },
+  form: {
+    title: null, // 商品名称
+    category_id: null, // 商品分类ID
+    cover: null, // 商品封面
+    desc: null, // 商品描述
+    unit: "件", // 商品单位
+    stock: 100, // 总库存
+    min_stock: 10, // 库存预警
+    status: 1, // 是否上架 0仓库 1上架
+    stock_display: 1, // 库存显示 0隐藏 1显示
+    min_price: 0, // 最低销售价
+    min_oprice: 0, // 最低原价
+  },
+  getData,
+  update: updateGoods,
+  create: createGoods,
+});
 
-      },
-      getData,
-      update: updateGoods,
-      create: createGoods
-    });
-
-
-const errorHandler = () => true
+const errorHandler = () => true;
 
 const tabbars = [
   {
-    key: 'all',
-    name: "全部"
+    key: "all",
+    name: "全部",
   },
   {
-    key: 'checking',
-    name: "审核"
+    key: "checking",
+    name: "审核",
   },
   {
     key: "saling",
-    name: "出售中"
+    name: "出售中",
   },
   {
     key: "off",
-    name: "已下架"
+    name: "已下架",
   },
   {
     key: "min_stock",
-    name: "库存预警"
+    name: "库存预警",
   },
   {
     key: "delete",
-    name: "回收站"
-  }
-]
+    name: "回收站",
+  },
+];
 
 // 商品分类
 const categoryList = ref([]);
-getCategoryList().then(res => categoryList.value = res);
-
-
-
-
+getCategoryList().then((res) => (categoryList.value = res));
 </script>
 
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

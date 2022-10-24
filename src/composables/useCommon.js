@@ -85,6 +85,23 @@ export const useInitTable = (opt = {}) => {
       loading.value = false;
     })
   }
+
+
+  // 批量上架下架商品
+  const handleMultiStatusChange = (status) => {
+    loading.value = true;
+    opt.updateStatus(multiSelectionIds.value, status).then(res => {
+      toast('修改状态成功');
+      // 清空选中
+      if (multipleTableRef.value) {
+        multipleTableRef.value.clearSelection();
+      }
+      getData();
+    }).finally(() => {
+      loading.value = false;
+    })
+  }
+
   return {
     loading,
     dataList,
@@ -99,7 +116,8 @@ export const useInitTable = (opt = {}) => {
     multipleTableRef,
     multiSelectionIds,
     handleSelectionChange,
-    handleMultiDelete
+    handleMultiDelete,
+    handleMultiStatusChange
   }
 }
 
