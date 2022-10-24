@@ -24,3 +24,15 @@ export const deleteGoods = ids => {
   return axios.post(`admin/goods/delete_all`, { ids });
 }
 
+// 获取商品轮播图
+export const readGoods = id => {
+  return axios.get(`admin/goods/read/${id}`);
+}
+
+
+// 设置商品轮播图
+export const setGoodsBanner = (id, data) => {
+  return axios.post(`admin/goods/banners/${id}`, data);
+}
+
+

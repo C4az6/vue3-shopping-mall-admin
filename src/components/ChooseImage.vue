@@ -1,6 +1,14 @@
 <template>
   <div v-if="modelValue">
-    <el-image class="w-[100px] h-[100px] rounded border mr-2" :src="modelValue" fit="cover" :lazy="true"></el-image>
+    <el-image v-if="typeof modelValue == 'string'" class="w-[100px] h-[100px] rounded border mr-2" :src="modelValue" fit="cover" :lazy="true"></el-image>
+    <div class="flex flex-wrap" v-else>
+      <div class=" relative mx-1 mb-2 w-[100px] h-[100px]" v-for="(item, index) in modelValue" :key="index">
+        <el-icon class=" absolute right-[5px] top-[5px] cursor-pointer bg-white rounded-full" style="z-index: 10;" @click="removeImage(item)">
+          <CircleClose></CircleClose>
+        </el-icon>
+        <el-image class="w-[100px] h-[100px] rounded border mr-2" :src="item" fit="cover" :lazy="true"></el-image>
+      </div>
+    </div>
   </div>
 
   <div class="choose-image-btn " @click="open">
@@ -18,7 +26,7 @@
       </el-header>
       <el-container>
         <ImageAside ref="ImageAsideRef" @change="handleAsideChange"></ImageAside>
-        <ImageMain ref="ImageMainRef" @choose="handleChoose" openChoose></ImageMain>
+        <ImageMain :limit="limit" ref="ImageMainRef" @choose="handleChoose" openChoose></ImageMain>
       </el-container>
     </el-container>
 
@@ -36,6 +44,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import ImageAside from '~/components/ImageAside.vue'
 import ImageMain from '~/components/ImageMain.vue'
+import { toast } from '~/composables/utils.js'
 const dialogVisible = ref(false);
 const ImageAsideRef = ref(null);
 const ImageMainRef = ref(null);
@@ -47,7 +56,11 @@ const handleAsideChange = (image_class_id) => ImageMainRef.value.loadData(image_
 const handleOpenUpload = () => ImageMainRef.value.openUploadFile();
 
 const props = defineProps({
-  modelValue: [String, Array]
+  modelValue: [String, Array],
+  limit: {
+    type: Number,
+    default: 1
+  }
 })
 
 const emit = defineEmits(["update:modelValue"])
@@ -60,9 +73,22 @@ const handleChoose = e => {
 };
 
 const handleSubmit = () => {
-  if (urls.length) emit("update:modelValue", urls[0]);
+  console.log("props.modelValue: ", props.modelValue.length);
+  let value = [];
+  if (props.limit == 1) {
+    value = urls[0];
+  } else {
+    value = [...props.modelValue, ...urls];
+    if (value.length > props.limit) {
+      return toast(`最多还能选择${props.limit - props.modelValue.length}张`)
+    }
+  }
+  if (value) emit("update:modelValue", value);
   close();
 }
+
+// 移除轮播图
+const removeImage = (url) => emit('update:modelValue', props.modelValue.filter(e => e != url));
 
 
 </script>
