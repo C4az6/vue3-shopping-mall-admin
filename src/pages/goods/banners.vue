@@ -8,9 +8,7 @@
         <el-button type="primary" @click="submit" :loading="loading">提交</el-button>
       </el-form-item>
     </el-form>
-
   </el-drawer>
-
 </template>
 
 <script setup>
