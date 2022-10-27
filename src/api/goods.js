@@ -36,3 +36,9 @@ export const setGoodsBanner = (id, data) => {
 }
 
 
+// 更新商品规格
+export const updateGoodsSku = (id, data) => {
+  return axios.post(`admin/goods/updateskus/${id}`, data);
+}
+
+

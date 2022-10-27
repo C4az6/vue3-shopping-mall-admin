@@ -85,7 +85,7 @@
             <template #default="scope">
               <div v-if="searchForm.tab !== 'delete'">
                 <el-button class="px-1" type="primary" text size="small" @click="handleEdit(scope.row)">修改</el-button>
-                <el-button class="px-1" type="primary" text size="small">商品规格</el-button>
+                <el-button class="px-1" type="primary" text size="small" @click="handleSetGoodsSkus(scope.row)" :loading="scope.row.skusLoading">商品规格</el-button>
                 <el-button class="px-1" :type="scope.row.goods_banner.length == 0 ? 'danger': 'primary'" text size="small" @click="handleSetGoodsBanners(scope.row)" :loading="scope.row.bannersLoading">设置轮播图</el-button>
                 <el-button class="px-1" :type="!scope.row.content ? 'danger': 'primary'" @click="handleSetGoodsContent(scope.row)" :loading="scope.row.contentLoading" text size="small">商品详情</el-button>
 
@@ -168,6 +168,7 @@
 
     <banners ref="bannersRef" @reloadData="getData"></banners>
     <content ref="contentRef" @reload="getData"></content>
+    <skus ref="skusRef"></skus>
   </div>
 </template>
 
@@ -189,6 +190,7 @@ import Search from "~/components/Search.vue";
 import SearchItem from "~/components/SearchItem.vue";
 import banners from './banners.vue';
 import content from './content.vue';
+import skus from './skus.vue'
 
 const {
   loading,
@@ -211,6 +213,7 @@ const {
     dataList.value = res.list.map((item) => {
       item.bannersLoading = false;
       item.contentLoading = false;
+      item.skusLoading = false;
       return item;
     });
     totalCount.value = res.totalCount;
@@ -305,6 +308,12 @@ const handleSetGoodsBanners = (row) => {
 const contentRef = ref(null);
 const handleSetGoodsContent = (row) => {
   contentRef.value.open(row);
+}
+
+// 设置商品规格
+const skusRef = ref(null);
+const handleSetGoodsSkus = (row) => {
+  skusRef.value.open(row);
 }
 
 </script>
