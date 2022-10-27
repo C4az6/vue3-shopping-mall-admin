@@ -1,5 +1,5 @@
 <template>
-  <div v-if="modelValue">
+  <div v-if="modelValue && preview">
     <el-image v-if="typeof modelValue == 'string'" class="w-[100px] h-[100px] rounded border mr-2" :src="modelValue" fit="cover" :lazy="true"></el-image>
     <div class="flex flex-wrap" v-else>
       <div class=" relative mx-1 mb-2 w-[100px] h-[100px]" v-for="(item, index) in modelValue" :key="index">
@@ -11,7 +11,7 @@
     </div>
   </div>
 
-  <div class="choose-image-btn " @click="open">
+  <div v-if="preview" class="choose-image-btn " @click="open">
     <el-icon :size="25" class="text-gray-500">
       <Plus />
     </el-icon>
@@ -49,7 +49,11 @@ const dialogVisible = ref(false);
 const ImageAsideRef = ref(null);
 const ImageMainRef = ref(null);
 
-const open = () => dialogVisible.value = true;
+const callbackFunction = ref(null);
+const open = (callback = null) => {
+  callbackFunction.value = callback;
+  dialogVisible.value = true;
+};
 const close = () => dialogVisible.value = false;
 const handleOpenCreate = () => ImageAsideRef.value.handleCreate();
 const handleAsideChange = (image_class_id) => ImageMainRef.value.loadData(image_class_id);
@@ -60,6 +64,10 @@ const props = defineProps({
   limit: {
     type: Number,
     default: 1
+  },
+  preview: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -73,23 +81,29 @@ const handleChoose = e => {
 };
 
 const handleSubmit = () => {
-  console.log("props.modelValue: ", props.modelValue.length);
   let value = [];
   if (props.limit == 1) {
     value = urls[0];
   } else {
-    value = [...props.modelValue, ...urls];
+    value = props.preview ? [...props.modelValue, ...urls] : [...urls];
     if (value.length > props.limit) {
-      return toast(`最多还能选择${props.limit - props.modelValue.length}张`)
+      let limit = props.preview ? (props.limit - props.modelValue.length) : props.limit;
+      return toast(`最多还能选择${limit}张`)
     }
   }
-  if (value) emit("update:modelValue", value);
+  if (value && props.preview) emit("update:modelValue", value);
+  if (!props.preview && typeof callbackFunction.value == "function") {
+    callbackFunction.value(value);
+  }
   close();
 }
 
 // 移除轮播图
 const removeImage = (url) => emit('update:modelValue', props.modelValue.filter(e => e != url));
 
+defineExpose({
+  open
+})
 
 </script>
 
