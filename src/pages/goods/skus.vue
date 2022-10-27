@@ -53,6 +53,10 @@
             </el-input>
           </el-form-item>
         </template>
+
+        <template v-else>
+          <SkuCard></SkuCard>
+        </template>
       </el-form>
     </FormDrawer>
   </div>
@@ -63,6 +67,7 @@ import { ref, reactive } from 'vue';
 import FormDrawer from '~/components/FormDrawer.vue';
 import { updateGoods, readGoods, updateGoodsSku } from '~/api/goods.js'
 import { toast } from '~/composables/utils.js';
+import SkuCard from './components/SkuCard.vue'
 
 const emit = defineEmits(['reload'])
 
