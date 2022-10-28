@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-button type="primary" size="default" @click="handleClick">test</el-button>
+    <el-button type="primary" size="default" @click="handleClick">test2</el-button>
 
   </div>
 </template>
@@ -9,7 +9,13 @@
 import { useRouter } from 'vue-router';
 const router = useRouter();
 const handleClick = () => {
-  router.push('/test2')
+  router.replace({
+    path: '/test3',
+    query: {
+      name: 'alexander',
+      age: 25
+    }
+  })
 }
 </script>
 
