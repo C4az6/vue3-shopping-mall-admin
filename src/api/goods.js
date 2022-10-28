@@ -46,3 +46,8 @@ export const createGoodsSkusCard = (data) => {
   return axios.post(`admin/goods_skus_card`, data);
 }
 
+// 修改商品规格选项
+export const updateGoodsSkuCard = (id, data) => {
+  return axios.post(`admin/goods_skus_card/${id}`, data);
+}
+
