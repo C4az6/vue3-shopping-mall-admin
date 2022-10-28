@@ -5,7 +5,7 @@
 
 import { ref } from 'vue';
 import { createGoodsSkusCard, updateGoodsSkuCard, deleteGoodsSkuCard } from '~/api/goods.js'
-import { toast } from '~/composables/utils.js'
+import { toast, useArrayMoveUp, useArrayMoveDown } from '~/composables/utils.js'
 
 // 当前商品ID
 export const goodsId = ref(0);
@@ -83,6 +83,16 @@ export function handleDelete(item) {
     item.loading = false;
   })
 }
+
+// 排序规格选项
+export function sortCard(action, index) {
+  if (action == 'up') {
+    useArrayMoveUp(sku_card_list.value, index);
+  } else {
+    useArrayMoveDown(sku_card_list.value, index);
+  }
+}
+
 
 // 初始化规格值
 /* 

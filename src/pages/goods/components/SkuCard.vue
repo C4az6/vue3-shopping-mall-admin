@@ -1,6 +1,6 @@
 <template>
   <el-form-item label="规格选项">
-    <el-card shadow="never" class="w-full mb-3" v-for="item in sku_card_list" :key="item.id" v-loading="item.loading">
+    <el-card shadow="never" class="w-full mb-3" v-for="(item,index) in sku_card_list" :key="item.id" v-loading="item.loading">
       <template #header>
         <div class="flex items-center">
           <el-input v-model="item.text" placeholder="规格名称" style="width: 200px;" @change="handleUpdate(item)">
@@ -13,13 +13,13 @@
 
           <!-- 小技巧: 让图标处于最右边就设置margin-left: auto; 处于最左边就设置 margin-right: auto -->
           <!-- 上移 -->
-          <el-button class="ml-auto" size="small">
+          <el-button class="ml-auto" size="small" @click="sortCard('up', index)" :disabled="index == 0">
             <el-icon>
               <Top></Top>
             </el-icon>
           </el-button>
           <!-- 下移 -->
-          <el-button size="small">
+          <el-button size="small" @click="sortCard('down', index)" :disabled="index == (sku_card_list.length-1)">
             <el-icon>
               <Bottom></Bottom>
             </el-icon>
@@ -48,7 +48,7 @@
 
 <script setup>
 import SkuCardItem from './SkuCardItem.vue'
-import { sku_card_list, loading, addSkuCardEvent, handleUpdate, handleDelete } from '~/composables/useSkus.js'
+import { sku_card_list, loading, addSkuCardEvent, handleUpdate, handleDelete, sortCard } from '~/composables/useSkus.js'
 
 </script>
 
