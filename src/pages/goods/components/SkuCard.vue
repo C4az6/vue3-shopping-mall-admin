@@ -1,9 +1,9 @@
 <template>
   <el-form-item label="规格选项">
-    <el-card shadow="never" class="w-full mb-3">
+    <el-card shadow="never" class="w-full mb-3" v-for="item in sku_card_list" :key="item.id">
       <template #header>
         <div class="flex items-center">
-          <el-input placeholder="规格名称" style="width: 200px;">
+          <el-input v-model="item.text" placeholder="规格名称" style="width: 200px;">
             <template #append>
               <el-icon>
                 <more></more>
@@ -27,12 +27,11 @@
               <Delete></Delete>
             </el-icon>
           </el-button>
-
         </div>
       </template>
 
       <!-- 规格值相关内容 -->
-      <SkuCardItem></SkuCardItem>
+      <SkuCardItem :skuCardId="item.id"></SkuCardItem>
     </el-card>
 
     <el-button type="success" size="small">添加规格</el-button>
@@ -42,6 +41,7 @@
 
 <script setup>
 import SkuCardItem from './SkuCardItem.vue'
+import { sku_card_list } from '~/composables/useSkus.js'
 
 </script>
 

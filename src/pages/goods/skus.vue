@@ -68,6 +68,7 @@ import FormDrawer from '~/components/FormDrawer.vue';
 import { updateGoods, readGoods, updateGoodsSku } from '~/api/goods.js'
 import { toast } from '~/composables/utils.js';
 import SkuCard from './components/SkuCard.vue'
+import { initSkuCardList, goodsId } from '~/composables/useSkus.js'
 
 const emit = defineEmits(['reload'])
 
@@ -82,12 +83,11 @@ const form = reactive({
     volume: 0
   }
 });
-const goodsId = ref(0);
+
 const open = (row) => {
   goodsId.value = row.id;
   row.skusLoading = true;
   readGoods(goodsId.value).then(res => {
-    console.log("res: ", res);
     form.sku_type = res.sku_type;
     form.sku_value = res.sku_value || ({
       oprice: 0,
@@ -95,7 +95,9 @@ const open = (row) => {
       cprice: 0,
       weight: 0,
       volume: 0
-    })
+    });
+    initSkuCardList(res);
+
     formDrawerRef.value.open();
   }).finally(() => {
     row.skusLoading = false;
