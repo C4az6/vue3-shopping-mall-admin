@@ -24,11 +24,17 @@
               <Bottom></Bottom>
             </el-icon>
           </el-button>
-          <el-button size="small">
-            <el-icon>
-              <Delete></Delete>
-            </el-icon>
-          </el-button>
+
+          <el-popconfirm width="200" title="是否要删除该规格选项?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(item)">
+            <template #reference>
+              <el-button size="small">
+                <el-icon>
+                  <Delete></Delete>
+                </el-icon>
+              </el-button>
+            </template>
+          </el-popconfirm>
+
         </div>
       </template>
 
@@ -42,7 +48,7 @@
 
 <script setup>
 import SkuCardItem from './SkuCardItem.vue'
-import { sku_card_list, loading, addSkuCardEvent, handleUpdate } from '~/composables/useSkus.js'
+import { sku_card_list, loading, addSkuCardEvent, handleUpdate, handleDelete } from '~/composables/useSkus.js'
 
 </script>
 

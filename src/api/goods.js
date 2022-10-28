@@ -51,3 +51,7 @@ export const updateGoodsSkuCard = (id, data) => {
   return axios.post(`admin/goods_skus_card/${id}`, data);
 }
 
+// 删除规格选项
+export const deleteGoodsSkuCard = (id) => {
+  return axios.post(`admin/goods_skus_card/${id}/delete`);
+}

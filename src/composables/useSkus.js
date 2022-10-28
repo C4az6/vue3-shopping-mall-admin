@@ -4,7 +4,7 @@
 
 
 import { ref } from 'vue';
-import { createGoodsSkusCard, updateGoodsSkuCard } from '~/api/goods.js'
+import { createGoodsSkusCard, updateGoodsSkuCard, deleteGoodsSkuCard } from '~/api/goods.js'
 import { toast } from '~/composables/utils.js'
 
 // 当前商品ID
@@ -67,6 +67,18 @@ export function handleUpdate(item) {
     // 修改失败
     item.text = item.name;
     toast('修改失败', 'error');
+  }).finally(() => {
+    item.loading = false;
+  })
+}
+
+
+// 删除规格选项
+export function handleDelete(item) {
+  item.loading = true;
+  deleteGoodsSkuCard(item.id).then(res => {
+    sku_card_list.value.splice(sku_card_list.value.findIndex(v => v.id == item.id), 1);
+    toast('删除成功~');
   }).finally(() => {
     item.loading = false;
   })
