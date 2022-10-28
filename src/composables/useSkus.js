@@ -78,7 +78,7 @@ export function handleDelete(item) {
   item.loading = true;
   deleteGoodsSkuCard(item.id).then(res => {
     sku_card_list.value.splice(sku_card_list.value.findIndex(v => v.id == item.id), 1);
-    toast('删除成功~');
+    toast('删除成功');
   }).finally(() => {
     item.loading = false;
   })
