@@ -4,12 +4,15 @@
 
 
 import { ref } from 'vue';
-import { createGoodsSkusCard, updateGoodsSkuCard, deleteGoodsSkuCard } from '~/api/goods.js'
+import { createGoodsSkusCard, updateGoodsSkuCard, deleteGoodsSkuCard, sortGoodsSkuCard } from '~/api/goods.js'
 import { toast, useArrayMoveUp, useArrayMoveDown } from '~/composables/utils.js'
 
 // 当前商品ID
 export const goodsId = ref(0);
 export const loading = ref(false);
+
+export const bodyLoading = ref(false);
+
 
 // 规格选项列表
 export const sku_card_list = ref([]);
@@ -86,11 +89,20 @@ export function handleDelete(item) {
 
 // 排序规格选项
 export function sortCard(action, index) {
-  if (action == 'up') {
-    useArrayMoveUp(sku_card_list.value, index);
-  } else {
-    useArrayMoveDown(sku_card_list.value, index);
-  }
+  // 深拷贝一份规格选项数据
+  let oList = JSON.parse(JSON.stringify(sku_card_list.value));
+  let func = action == 'up' ? useArrayMoveUp : useArrayMoveDown;
+  func(oList, index);
+
+  let sortData = oList.map((item, index) => {
+    return { id: item.id, order: index + 1 }
+  })
+  bodyLoading.value = true;
+  sortGoodsSkuCard({ sortdata: sortData }).then(res => {
+    func(sku_card_list.value, index);
+  }).finally(() => {
+    bodyLoading.value = false;
+  })
 }
 
 
