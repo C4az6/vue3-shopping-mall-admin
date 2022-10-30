@@ -1,7 +1,6 @@
 <template>
   <div>
-    <el-button type="primary" size="default" @click="handleClick">test</el-button>
-
+    <el-button type="primary" size="small" @click="handleClick">预览文件</el-button>
   </div>
 </template>
 
@@ -9,8 +8,9 @@
 import { useRouter } from 'vue-router';
 const router = useRouter();
 const handleClick = () => {
-  router.push('/test2')
-}
+  console.log(window.location.href);
+  // router.push('/test2')
+};
 </script>
 
 <style lang="scss" scoped>
