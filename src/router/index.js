@@ -20,6 +20,7 @@ import ManagerList from '~/pages/manager/list.vue'
 import AccessList from '~/pages/access/list.vue'
 import RoleList from '~/pages/role/list.vue'
 import SkusList from '~/pages/skus/list.vue';
+import LevelList from '~/pages/level/list.vue'
 import test from '~/pages/test/test.vue'
 import test2 from '~/pages/test2/test2.vue'
 import test3 from '~/pages/test3/test3.vue'
@@ -177,6 +178,14 @@ const asyncRoutes = [
     component: SkusList,
     meta: {
       title: '规格管理'
+    }
+  },
+  {
+    path: "/level/list",
+    name: '/level/list',
+    component: LevelList,
+    meta: {
+      title: '会员等级'
     }
   }
 ]
