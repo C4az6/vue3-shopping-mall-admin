@@ -26,11 +26,14 @@
 
     </el-table>
   </FormDrawer>
+
+  <ChooseGoods ref="ChooseGoodsRef"></ChooseGoods>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue';
-import FormDrawer from '~/components/FormDrawer.vue'
+import FormDrawer from '~/components/FormDrawer.vue';
+import ChooseGoods from '~/components/ChooseGoods.vue';
 import { toast } from '~/composables/utils.js';
 import {
   getCategoryGoodsList,
@@ -38,6 +41,7 @@ import {
   connectCategoryGoods
 } from '~/api/category.js';
 
+const ChooseGoodsRef = ref(null);
 const formDrawerRef = ref(null);
 const category_id = ref(0);
 const dataList = ref([]);
@@ -72,7 +76,19 @@ const handleDelete = (row) => {
 
 
 const handleConnect = () => {
-  console.log('关联操作~');
+  ChooseGoodsRef.value.open(ids => {
+    console.log("选中的关联商品id: ", ids);
+    formDrawerRef.value.showLoading();
+    connectCategoryGoods({
+      category_id: category_id.value,
+      goods_ids: ids
+    }).then(res => {
+      getData();
+      toast("商品关联成功~");
+    }).finally(() => {
+      formDrawerRef.value.hideLoading();
+    })
+  });
 }
 
 defineExpose({
