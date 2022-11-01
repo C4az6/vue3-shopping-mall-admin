@@ -47,7 +47,7 @@
             <template #default="scope">
               <div>
                 <el-button type="primary" @click="handleEdit(scope.row)" text size="small">修改</el-button>
-                <el-popconfirm width="200" title="是否要删除该会员?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(scope)">
+                <el-popconfirm width="200" title="是否要删除该会员?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(scope.row.id)">
                   <template #reference>
                     <el-button type="primary" text size="small">删除</el-button>
                   </template>

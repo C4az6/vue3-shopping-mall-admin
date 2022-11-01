@@ -15,12 +15,12 @@ export const createUser = (data) => {
   return axios.post('admin/user', data);
 }
 
-// 修改管理员
+// 修改用户
 export const updateUser = (id, data) => {
   return axios.post(`admin/user/${id}`, data)
 }
 
-// 删除管理员
+// 删除用户
 export const deleteUser = id => {
   return axios.post(`admin/user/${id}/delete`);
 }
