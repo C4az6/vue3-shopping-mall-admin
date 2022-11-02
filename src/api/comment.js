@@ -14,5 +14,5 @@ export const updateGoodsCommentStatus = (id, status) => {
 
 // 回复商品评价
 export const reviewGoodsComment = (id, data) => {
-  return axios.post(`admin/goods_comment/review/${id}`, data);
+  return axios.post(`admin/goods_comment/review/${id}`, { data });
 }
