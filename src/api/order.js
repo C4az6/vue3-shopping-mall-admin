@@ -20,3 +20,8 @@ export const exportOrder = query => {
     responseType: "blob"
   });
 }
+
+// 获取订单物流信息
+export const getShipInfo = id => {
+  return axios.get(`admin/order/${id}/get_ship_info`)
+}

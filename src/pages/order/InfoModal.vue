@@ -102,19 +102,25 @@
           </el-form-item>
         </el-form>
       </el-card>
-
     </el-drawer>
+
+    <ShipInfoModal ref="ShipInfoModalRef"></ShipInfoModal>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue';
+import ShipInfoModal from './ShipInfoModal.vue';
 
 const dialogVisible = ref(false);
 const open = () => dialogVisible.value = true;
 const close = () => dialogVisible.value = false;
 
-const openShipInfoModal = (id) => { };
+const ShipInfoModalRef = ref(null);
+const openShipInfoModal = (id) => {
+  console.log("id: ", id);
+  ShipInfoModalRef.value.open(id);
+};
 
 const props = defineProps({
   info: Object
