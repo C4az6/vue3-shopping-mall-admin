@@ -25,3 +25,18 @@ export const exportOrder = query => {
 export const getShipInfo = id => {
   return axios.get(`admin/order/${id}/get_ship_info`)
 }
+
+// 获取快递公司列表
+export const getExpressCompanyList = () => {
+  return axios.get(`admin/express_company/1`)
+}
+
+// 订单发货
+export const orderShip = (id, data) => {
+  return axios.post(`admin/order/${id}/ship`, data)
+}
+
+// 拒绝/同意退款
+export const handleRefund = (id, data) => {
+  return axios.post(`admin/order/${id}/handle_refund`, data);
+}

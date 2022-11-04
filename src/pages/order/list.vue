@@ -89,7 +89,7 @@
         <el-table-column label="操作" align="center">
           <template #default="{row}">
             <el-button text size="small" type="primary" @click="openInfoModal(row)">订单详情</el-button>
-            <el-button v-if="searchForm.tab == 'noship'" text size="small" type="primary">订单发货</el-button>
+            <el-button v-if="searchForm.tab == 'noship'" text size="small" type="primary" @click="openOrderShip(row)">订单发货</el-button>
             <el-button v-if="searchForm.tab == 'refunding'" text size="small" type="primary">同意退款</el-button>
             <el-button v-if="searchForm.tab == 'refunding'" text size="small" type="primary">拒绝退款</el-button>
           </template>
@@ -104,6 +104,7 @@
 
     <ExportExcel :tabs="tabList" ref="ExportExcelRef"></ExportExcel>
     <InfoModal ref="InfoModalRef" :info="info"></InfoModal>
+    <OrderShip ref="OrderShipRef"></OrderShip>
 
   </div>
 </template>
@@ -117,6 +118,7 @@ import { useInitTable } from '~/composables/useCommon.js';
 import { getOrderList, deleteOrder } from '~/api/order.js'
 import ExportExcel from './ExportExcel.vue'
 import InfoModal from './InfoModal.vue'
+import OrderShip from './OrderShip.vue'
 
 const tabList = ref([
   {
@@ -162,6 +164,11 @@ const handleExportExcel = () => {
 // 订单详情
 const InfoModalRef = ref(null);
 const info = ref(null);
+
+const OrderShipRef = ref(null);
+const openOrderShip = row => {
+  OrderShipRef.value.open(row.id);
+}
 
 const openInfoModal = row => {
   console.log("row: ", row);
