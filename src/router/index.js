@@ -22,6 +22,7 @@ import RoleList from '~/pages/role/list.vue'
 import SkusList from '~/pages/skus/list.vue';
 import LevelList from '~/pages/level/list.vue'
 import SettingBuy from '~/pages/setting/buy.vue'
+import SettingShip from '~/pages/setting/ship.vue'
 import test from '~/pages/test/test.vue'
 import test2 from '~/pages/test2/test2.vue'
 import test3 from '~/pages/test3/test3.vue'
@@ -149,6 +150,15 @@ const asyncRoutes = [
     component: SettingBuy,
     meta: {
       title: "支付配置"
+    }
+  },
+
+  {
+    path: "/setting/ship",
+    name: "/setting/ship",
+    component: SettingShip,
+    meta: {
+      title: "物流配置"
     }
   },
 
