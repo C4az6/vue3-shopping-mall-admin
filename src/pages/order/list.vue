@@ -30,9 +30,12 @@
         </template>
       </Search>
 
-      <ListHeader class="mt-3" layout="delete,refresh,export"></ListHeader>
+      <ListHeader class="mt-3" layout="delete,refresh,export" @refresh="getData" @delete="handleMultiDelete">
 
-      <el-table :data="dataList" border v-loading="loading">
+      </ListHeader>
+
+      <el-table ref="multipleTableRef" @selection-change="handleSelectionChange" :data="dataList" border v-loading="loading">
+        <el-table-column type="selection" width="55" />
         <el-table-column label="商品" width="350">
           <template #default="{row}">
             <div class="flex text-xs">

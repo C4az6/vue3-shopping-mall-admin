@@ -39,7 +39,7 @@ const props = defineProps({
 })
 const btns = computed(() => props.layout.split(","));
 
-defineEmits(["create", "refresh", "export"]);
+defineEmits(["create", "refresh", "export", "delete"]);
 </script>
 
 <style lang="less" scoped>
