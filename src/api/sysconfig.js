@@ -6,6 +6,6 @@ export function getSysConfig() {
 }
 
 // 设置系统配置
-export function setSysConfig() {
+export function setSysConfig(data) {
   return axios.post(`/admin/sysconfig`, data);
 }
