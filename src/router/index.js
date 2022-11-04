@@ -21,6 +21,7 @@ import AccessList from '~/pages/access/list.vue'
 import RoleList from '~/pages/role/list.vue'
 import SkusList from '~/pages/skus/list.vue';
 import LevelList from '~/pages/level/list.vue'
+import SettingBuy from '~/pages/setting/buy.vue'
 import test from '~/pages/test/test.vue'
 import test2 from '~/pages/test2/test2.vue'
 import test3 from '~/pages/test3/test3.vue'
@@ -140,7 +141,18 @@ const asyncRoutes = [
     meta: {
       title: "配置"
     }
-  }, {
+  },
+
+  {
+    path: "/setting/buy",
+    name: "/setting/buy",
+    component: SettingBuy,
+    meta: {
+      title: "支付配置"
+    }
+  },
+
+  {
     path: "/coupon/list",
     name: "/coupon/list",
     component: CouponList,
