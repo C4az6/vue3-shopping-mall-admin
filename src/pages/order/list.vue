@@ -90,8 +90,8 @@
           <template #default="{row}">
             <el-button text size="small" type="primary" @click="openInfoModal(row)">订单详情</el-button>
             <el-button v-if="searchForm.tab == 'noship'" text size="small" type="primary" @click="openOrderShip(row)">订单发货</el-button>
-            <el-button v-if="searchForm.tab == 'refunding'" text size="small" type="primary">同意退款</el-button>
-            <el-button v-if="searchForm.tab == 'refunding'" text size="small" type="primary">拒绝退款</el-button>
+            <el-button v-if="searchForm.tab == 'refunding'" text size="small" type="primary" @click="handleRefundClick(row,1)">同意退款</el-button>
+            <el-button v-if="searchForm.tab == 'refunding'" text size="small" type="primary" @click="handleRefundClick(row,0)">拒绝退款</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -115,10 +115,11 @@ import Search from '~/components/Search.vue';
 import SearchItem from '~/components/SearchItem.vue';
 import ListHeader from '~/components/ListHeader.vue';
 import { useInitTable } from '~/composables/useCommon.js';
-import { getOrderList, deleteOrder } from '~/api/order.js'
+import { getOrderList, deleteOrder, handleRefund } from '~/api/order.js'
 import ExportExcel from './ExportExcel.vue'
 import InfoModal from './InfoModal.vue'
 import OrderShip from './OrderShip.vue'
+import { showModal, showPrompt } from '~/composables/utils.js'
 
 const tabList = ref([
   {
@@ -186,6 +187,19 @@ const openInfoModal = row => {
   })
   info.value = row;
   InfoModalRef.value.open();
+}
+
+const handleRefundClick = (row, agree) => {
+  (agree ? showModal('是否同意该订单退款?') : showPrompt('请输入拒绝的理由')).then(({ value }) => {
+    let data = { agree }
+    if (!agree) {
+      data.disagree_reason = value;
+    }
+    handleRefund(row.id, data).then(res => {
+      getList();
+      toast('操作成功');
+    })
+  })
 }
 
 const {
