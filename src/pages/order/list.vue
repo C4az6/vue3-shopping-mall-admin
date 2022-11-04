@@ -88,7 +88,7 @@
 
         <el-table-column label="操作" align="center">
           <template #default="{row}">
-            <el-button text size="small" type="primary">订单详情</el-button>
+            <el-button text size="small" type="primary" @click="openInfoModal(row)">订单详情</el-button>
             <el-button v-if="searchForm.tab == 'noship'" text size="small" type="primary">订单发货</el-button>
             <el-button v-if="searchForm.tab == 'refunding'" text size="small" type="primary">同意退款</el-button>
             <el-button v-if="searchForm.tab == 'refunding'" text size="small" type="primary">拒绝退款</el-button>
@@ -103,18 +103,20 @@
     </el-card>
 
     <ExportExcel :tabs="tabList" ref="ExportExcelRef"></ExportExcel>
+    <InfoModal ref="InfoModalRef" :info="info"></InfoModal>
 
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, registerRuntimeCompiler } from 'vue';
 import Search from '~/components/Search.vue';
 import SearchItem from '~/components/SearchItem.vue';
 import ListHeader from '~/components/ListHeader.vue';
 import { useInitTable } from '~/composables/useCommon.js';
 import { getOrderList, deleteOrder } from '~/api/order.js'
 import ExportExcel from './ExportExcel.vue'
+import InfoModal from './InfoModal.vue'
 
 const tabList = ref([
   {
@@ -156,6 +158,28 @@ const ExportExcelRef = ref(null);
 const handleExportExcel = () => {
   ExportExcelRef.value.open();
 };
+
+// 订单详情
+const InfoModalRef = ref(null);
+const info = ref(null);
+
+const openInfoModal = row => {
+  console.log("row: ", row);
+  row.order_items = row.order_items.map(v => {
+    // 处理多规格SKU的情况
+    if (v.skus_type == 1 && v.goods_skus) {
+      let s = [];
+      for (const k in v.goods_skus.skus) {
+        console.log("k: ", k);
+        s.push(v.goods_skus.skus[k].value);
+      }
+      v.sku = s.join(',');
+    }
+    return v;
+  })
+  info.value = row;
+  InfoModalRef.value.open();
+}
 
 const {
   loading,
