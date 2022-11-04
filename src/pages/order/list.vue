@@ -21,16 +21,16 @@
           </SearchItem>
 
           <SearchItem label="开始时间">
-            <el-date-picker v-model="searchForm.starttime" type="date" placeholder="请输入开始时间" size="small" />
+            <el-date-picker v-model="searchForm.starttime" type="date" placeholder="请输入开始时间" size="small" value-format="YYYY-MM-DD" />
           </SearchItem>
 
           <SearchItem label="结束时间">
-            <el-date-picker v-model="searchForm.endtime" type="date" placeholder="请输入开始时间" size="small" />
+            <el-date-picker v-model="searchForm.endtime" type="date" placeholder="请输入开始时间" size="small" value-format="YYYY-MM-DD" />
           </SearchItem>
         </template>
       </Search>
 
-      <ListHeader class="mt-3" layout="delete,refresh,export" @refresh="getData" @delete="handleMultiDelete">
+      <ListHeader class="mt-3" layout="delete,refresh,export" @refresh="getData" @delete="handleMultiDelete" @export="handleExportExcel">
 
       </ListHeader>
 
@@ -100,8 +100,9 @@
         <el-pagination @current-change="getData" :currentPage="currentPage" layout="prev, pager, next" :total="totalCount" background>>
         </el-pagination>
       </div>
-
     </el-card>
+
+    <ExportExcel :tabs="tabList" ref="ExportExcelRef"></ExportExcel>
 
   </div>
 </template>
@@ -113,6 +114,7 @@ import SearchItem from '~/components/SearchItem.vue';
 import ListHeader from '~/components/ListHeader.vue';
 import { useInitTable } from '~/composables/useCommon.js';
 import { getOrderList, deleteOrder } from '~/api/order.js'
+import ExportExcel from './ExportExcel.vue'
 
 const tabList = ref([
   {
@@ -148,6 +150,12 @@ const tabList = ref([
     label: '退款中'
   },
 ]);
+
+// 导出excel
+const ExportExcelRef = ref(null);
+const handleExportExcel = () => {
+  ExportExcelRef.value.open();
+};
 
 const {
   loading,

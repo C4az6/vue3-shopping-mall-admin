@@ -9,7 +9,7 @@
 <script setup>
 defineProps({
   label: String
-})
+});
 
 </script>
 

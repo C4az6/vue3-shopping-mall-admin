@@ -24,7 +24,8 @@ service.interceptors.request.use(config => {
 
 // 响应拦截器
 service.interceptors.response.use(response => {
-  return response.data.data;
+  // 处理响应数据
+  return response.request.responseType == "blob" ? response.data : response.data.data;
 }, error => {
   if (error.response.data.msg === '非法token，请先登录！') {
     removeToken();

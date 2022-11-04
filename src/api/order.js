@@ -11,3 +11,12 @@ export const getOrderList = (page, query) => {
 export const deleteOrder = (ids) => {
   return axios.post(`admin/order/delete_all`, { ids })
 }
+
+// 导出订单下载excel
+export const exportOrder = query => {
+  let q = queryParams(query);
+  return axios.post(`admin/order/excelexport${q}`, {}, {
+    // 表示浏览器将要响应的数据类型
+    responseType: "blob"
+  });
+}
