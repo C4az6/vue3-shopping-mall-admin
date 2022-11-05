@@ -60,10 +60,10 @@
           <el-table-column label="未提现金额" align="center" prop="no_cash_out_price" />
 
           <el-table-column align="center" label="操作" fixed="right" width="200">
-            <template #default="scope">
+            <template #default="{row}">
               <div>
-                <el-button type="primary" text size="small">推广人</el-button>
-                <el-button type="primary" text size="small">推广订单</el-button>
+                <el-button type="primary" text size="small" @click="openDataDrawer(row.id, 'user')">推广人</el-button>
+                <el-button type="primary" text size="small" @click="openDataDrawer(row.id, 'order')">推广订单</el-button>
               </div>
             </template>
           </el-table-column>
@@ -74,6 +74,9 @@
         <el-pagination background layout="prev, pager, next" :current-page="currentPage" :page-size="limit" :total="totalCount" @current-change="getData" />
       </div>
     </el-card>
+
+    <dataDrawer ref="dataDrawerRef"></dataDrawer>
+    <dataDrawer ref="orderDataDrawerRef" type="order"></dataDrawer>
   </div>
 </template>
 
@@ -81,6 +84,7 @@
 import { getAgentStatistics, getAgentList } from '~/api/distribution';
 import { ref, reactive } from 'vue';
 import Panel from './panel.vue'
+import dataDrawer from './dataDrawer.vue'
 
 import { useInitTable } from '~/composables/useCommon.js'
 import Search from '~/components/Search.vue';
@@ -101,6 +105,14 @@ const { loading,
     totalCount.value = res.totalCount;
   },
 });
+
+const dataDrawerRef = ref(null);
+const orderDataDrawerRef = ref(null);
+
+const openDataDrawer = (id, type) => {
+  console.log("type: ", type);
+  (type == 'user' ? dataDrawerRef.value.open(id) : orderDataDrawerRef.value.open(id));
+}
 
 
 const errorHandler = () => true
