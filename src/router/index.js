@@ -23,6 +23,7 @@ import SkusList from '~/pages/skus/list.vue';
 import LevelList from '~/pages/level/list.vue'
 import SettingBuy from '~/pages/setting/buy.vue'
 import SettingShip from '~/pages/setting/ship.vue'
+import DistributionIndex from '~/pages/distribution/index.vue'
 import test from '~/pages/test/test.vue'
 import test2 from '~/pages/test2/test2.vue'
 import test3 from '~/pages/test3/test3.vue'
@@ -208,6 +209,14 @@ const asyncRoutes = [
     component: LevelList,
     meta: {
       title: '会员等级'
+    }
+  },
+  {
+    path: "/distribution/index",
+    name: '/distribution/index',
+    component: DistributionIndex,
+    meta: {
+      title: '分销员管理'
     }
   }
 ]
