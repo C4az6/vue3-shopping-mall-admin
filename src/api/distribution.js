@@ -17,3 +17,14 @@ export function getAgentOrderList(page, query) {
   let p = queryParams(query);
   return axios.get(`admin/user_bill/${page}`)
 }
+
+
+// 获取配置信息
+export function getConfig() {
+  return axios.get(`admin/distribution_setting/get`);
+}
+
+// 设置配置
+export function setConfig(data) {
+  return axios.post(`admin/distribution_setting/set`, data);
+}
