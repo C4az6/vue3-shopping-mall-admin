@@ -2,7 +2,9 @@
   <router-view></router-view>
 </template>
 
-<script setup></script>
+<script setup>
+console.log(import.meta.env);
+</script>
 
 <style>
 body {
